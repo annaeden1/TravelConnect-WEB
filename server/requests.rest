@@ -1,0 +1,142 @@
+### Create a new Post
+POST http://localhost:3000/post
+Content-Type: application/json
+
+{
+  "content": "This is my first post!",
+  "userCreatorID": "507f1f77bcf86cd799439011"
+}
+
+### Create a new Comment
+POST http://localhost:3000/comment
+Content-Type: application/json
+
+{
+  "description": "This is my first comment",
+  "relatedPostID": "694ea5a95aeabdf01d0cb2f0",
+  "userCreatorID": "507f1f77bcf86cd799439011"
+}
+
+### Delete a Comment
+DELETE http://localhost:3000/comment/694ea6915aeabdf01d0cb2fa
+Content-Type: application/json
+
+### Update an existing Post
+PUT http://localhost:3000/post/694ea5a95aeabdf01d0cb2f0
+Content-Type: application/json
+
+{
+  "content": "This is my updated second post!",
+  "userCreatorID": "507f1f77bcf86cd799439011"
+}
+
+### Delete an existing Post
+DELETE  http://localhost:3000/post/694ea6775aeabdf01d0cb2f8
+Content-Type: application/json
+
+### Update an existing Comment
+PUT http://localhost:3000/comment/6945e8897befcb89b3bd5667?relatedPostID=694571739bc8067f2333c640
+Content-Type: application/json
+
+{
+  "description": "Thiss is my updated first comment",
+  "userCreatorID": "507f1f77bcf86cd799439011",
+  "relatedPostID": "694571739bc8067f2333c640"
+}
+
+### Get all Posts
+GET http://localhost:3000/post
+Content-Type: application/json
+
+### Get a Post by ID
+GET http://localhost:3000/post/694571739bc8067f2333c640
+Content-Type: application/json  
+
+### Get all Comments
+GET http://localhost:3000/comment
+Content-Type: application/json  
+
+### Get a Comment by ID
+GET http://localhost:3000/comment/6945e8897befcb89b3bd5667
+Content-Type: application/json 
+
+### Get all Comments by relatedPostID
+GET http://localhost:3000/comment?relatedPostID=694571739bc8067f2333c640
+Content-Type: application/json 
+
+### Get all Posts by userCreatorID
+GET http://localhost:3000/post?userCreatorID=507f1f77bcf86cd799439011
+Content-Type: application/json 
+
+### Create a new User
+POST http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "username": "liam",
+  "email": "liam@example.com",
+  "profileImage": "http://example.com/images/liam.jpg",
+  "password": "securepassword123"
+}
+
+### Get a User by ID
+GET http://localhost:3000/user/69590fd18974fd6b3614707f
+Content-Type: application/json
+
+### Get all Users
+GET http://localhost:3000/user
+Content-Type: application/json
+
+### Delete a User
+DELETE http://localhost:3000/user/694ead68f27c12702ef7159d
+Content-Type: application/json
+
+### Update an existing User
+PUT http://localhost:3000/user/694ead68f27c12702ef7159d
+Content-Type: application/json
+
+{
+  "username": "liamhemo_updated",
+  "email": "liamhemo_updated@example.com",
+  "profileImage": "http://example.com/images/liam_updated.jpg",
+  "password": "newsecurepassword456"
+}
+
+### User Registration
+POST http://localhost:3000/auth/register 
+Content-Type: application/json
+
+{
+  "username": "annaeden",
+  "email": "annaeden@example.com",
+  "profileImage": "http://example.com/images/liam_updated.jpg",
+  "password": "mypassword"
+}
+
+
+### User Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "username": "annaeden",
+  "email": "annaeden@example.com",
+  "profileImage": "http://example.com/images/liam_updated.jpg",
+  "password": "mypassword"
+}
+
+### Refresh Token
+POST http://localhost:3000/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjA1MTk5MzU2MTA2MTY3NjQxIiwiaWF0IjoxNzY3NDQ0NDcwLCJleHAiOjE3Njc1MzA4NzB9.tprSqane2GBLk2RS1yxNf01E7gptW3IXEsk57jG0L6o"
+} 
+
+### User Logout
+POST http://localhost:3000/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjg0NzM4NzAxNzYxMDI2NTYiLCJpYXQiOjE3Njc0NDQ0OTUsImV4cCI6MTc2NzUzMDg5NX0.PjcYFbcQq5UpA_giHdYZWySBiuuTFhiLqRu418_aO28"
+}
