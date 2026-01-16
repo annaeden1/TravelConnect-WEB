@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import commentController from "../controllers/commentController";
+import { authenticate } from "../middlewares/authMiddleware";
 
 /**
  * @swagger
@@ -31,7 +32,7 @@ import commentController from "../controllers/commentController";
  *       500:
  *         description: Internal server error
  */
-router.post("/", commentController.create.bind(commentController));
+router.post("/", authenticate, commentController.create.bind(commentController));
 
 /**
  * @swagger
@@ -54,7 +55,7 @@ router.post("/", commentController.create.bind(commentController));
  *       500:
  *         description: Internal server error
  */
-router.delete("/:_id", commentController.delete.bind(commentController));
+router.delete("/:_id", authenticate, commentController.delete.bind(commentController));
 
 /**
  * @swagger
@@ -87,7 +88,7 @@ router.delete("/:_id", commentController.delete.bind(commentController));
  *       500:
  *         description: Internal server error
  */
-router.put("/:_id", commentController.update.bind(commentController));
+router.put("/:_id", authenticate, commentController.update.bind(commentController));
 
 /**
  * @swagger
@@ -118,7 +119,7 @@ router.put("/:_id", commentController.update.bind(commentController));
  *       500:
  *         description: Internal server error
  */
-router.get("/", commentController.get.bind(commentController));
+router.get("/", authenticate, commentController.get.bind(commentController));
 
 /**
  * @swagger
@@ -145,6 +146,6 @@ router.get("/", commentController.get.bind(commentController));
  *       500:
  *         description: Internal server error
  */
-router.get("/:_id", commentController.getById.bind(commentController));
+router.get("/:_id", authenticate, commentController.getById.bind(commentController));
 
 export default router;

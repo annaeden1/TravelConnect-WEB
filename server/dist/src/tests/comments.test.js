@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = __importDefault(require("../index"));
 const commentModel_1 = require("../models/commentModel");
+const userData_1 = require("./types/userData");
+let loginUser;
 const testData = [
     {
         relatedPostID: "648a1f4e2f8fb814c8a1e1a1",
@@ -35,6 +37,7 @@ const testData = [
 let app;
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     app = yield (0, index_1.default)();
+    loginUser = yield (0, userData_1.getLoggedInUser)(app);
 }));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
     yield commentModel_1.commentModel.deleteMany({});
@@ -45,7 +48,7 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
 describe("Comment API Endpoints", () => {
     test("should create a new comment", () => __awaiter(void 0, void 0, void 0, function* () {
         for (const data of testData) {
-            const res = yield (0, supertest_1.default)(app).post("/comment").send(data);
+            const res = yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
             expect(res.statusCode).toEqual(201);
             expect(res.body).toHaveProperty("_id");
             expect(res.body.description).toBe(data.description);
@@ -55,47 +58,47 @@ describe("Comment API Endpoints", () => {
     }));
     test("should retrieve all comments", () => __awaiter(void 0, void 0, void 0, function* () {
         for (const data of testData) {
-            yield (0, supertest_1.default)(app).post("/comment").send(data);
+            yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
         }
-        const res = yield (0, supertest_1.default)(app).get("/comment");
+        const res = yield (0, supertest_1.default)(app).get("/comment").set("Authorization", "Bearer " + loginUser.token);
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toBe(testData.length);
     }));
     test("should retrieve comments for a specific post", () => __awaiter(void 0, void 0, void 0, function* () {
         for (const data of testData) {
-            yield (0, supertest_1.default)(app).post("/comment").send(data);
+            yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
         }
         const relatedPostID = testData[0].relatedPostID;
-        const res = yield (0, supertest_1.default)(app).get(`/comment?relatedPostID=${relatedPostID}`);
+        const res = yield (0, supertest_1.default)(app).get(`/comment?relatedPostID=${relatedPostID}`).set("Authorization", "Bearer " + loginUser.token);
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toBe(1);
         expect(res.body[0].relatedPostID).toBe(relatedPostID);
     }));
 });
 test("should retrieve a comment by ID", () => __awaiter(void 0, void 0, void 0, function* () {
-    const createRes = yield (0, supertest_1.default)(app).post("/comment").send(testData[0]);
+    const createRes = yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
     const commentId = createRes.body._id;
-    const res = yield (0, supertest_1.default)(app).get(`/comment/${commentId}`);
+    const res = yield (0, supertest_1.default)(app).get(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
     expect(res.statusCode).toEqual(200);
     expect(res.body._id).toBe(commentId);
     expect(res.body.description).toBe(testData[0].description);
 }));
 test("should update a comment by ID", () => __awaiter(void 0, void 0, void 0, function* () {
-    const createRes = yield (0, supertest_1.default)(app).post("/comment").send(testData[0]);
+    const createRes = yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
     const commentId = createRes.body._id;
     const updatedData = {
         description: "Updated comment description",
     };
-    const res = yield (0, supertest_1.default)(app).put(`/comment/${commentId}`).send(updatedData);
+    const res = yield (0, supertest_1.default)(app).put(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token).send(updatedData);
     expect(res.statusCode).toEqual(200);
     expect(res.body.description).toBe(updatedData.description);
 }));
 test("should delete a comment by ID", () => __awaiter(void 0, void 0, void 0, function* () {
-    const createRes = yield (0, supertest_1.default)(app).post("/comment").send(testData[0]);
+    const createRes = yield (0, supertest_1.default)(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
     const commentId = createRes.body._id;
-    const res = yield (0, supertest_1.default)(app).delete(`/comment/${commentId}`);
+    const res = yield (0, supertest_1.default)(app).delete(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
     expect(res.statusCode).toEqual(200);
-    const getRes = yield (0, supertest_1.default)(app).get(`/comment/${commentId}`);
+    const getRes = yield (0, supertest_1.default)(app).get(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
     expect(getRes.statusCode).toEqual(404);
 }));
 //# sourceMappingURL=comments.test.js.map

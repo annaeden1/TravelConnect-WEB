@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const userController_1 = __importDefault(require("../controllers/userController"));
+const authMiddleware_1 = require("../middlewares/authMiddleware");
 /**
  * @swagger
  * /user:
@@ -55,7 +56,7 @@ const userController_1 = __importDefault(require("../controllers/userController"
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post("/", userController_1.default.create.bind(userController_1.default));
+router.post("/", authMiddleware_1.authenticate, userController_1.default.create.bind(userController_1.default));
 /**
  * @swagger
  * /user/{_id}:
@@ -83,7 +84,7 @@ router.post("/", userController_1.default.create.bind(userController_1.default))
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.delete("/:_id", userController_1.default.delete.bind(userController_1.default));
+router.delete("/:_id", authMiddleware_1.authenticate, userController_1.default.delete.bind(userController_1.default));
 /**
  * @swagger
  * /user/{_id}:
@@ -138,7 +139,7 @@ router.delete("/:_id", userController_1.default.delete.bind(userController_1.def
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.put("/:_id", userController_1.default.update.bind(userController_1.default));
+router.put("/:_id", authMiddleware_1.authenticate, userController_1.default.update.bind(userController_1.default));
 /**
  * @swagger
  * /user:
@@ -173,7 +174,7 @@ router.put("/:_id", userController_1.default.update.bind(userController_1.defaul
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get("/", userController_1.default.get.bind(userController_1.default));
+router.get("/", authMiddleware_1.authenticate, userController_1.default.get.bind(userController_1.default));
 /**
  * @swagger
  * /user/{_id}:
@@ -202,6 +203,6 @@ router.get("/", userController_1.default.get.bind(userController_1.default));
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get("/:_id", userController_1.default.getById.bind(userController_1.default));
+router.get("/:_id", authMiddleware_1.authenticate, userController_1.default.getById.bind(userController_1.default));
 exports.default = router;
 //# sourceMappingURL=userRoutes.js.map

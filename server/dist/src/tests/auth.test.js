@@ -20,18 +20,25 @@ const testData = [
         username: "John Doeeeee",
         email: "john@example.com",
         password: "password123",
-        profileImage: "http://example.com/image.jpg"
+        profileImage: "http://example.com/image.jpg",
+        token: "",
+        refreshTokens: [""]
     },
     {
         username: "Jane Smith",
         email: "jane@example.com",
         profileImage: "http://example2.com/image.jpg",
         password: "password456",
+        token: "",
+        refreshTokens: [""]
     },
     {
         username: "Alice Johnson",
         email: "alice@example.com",
         password: "password789",
+        profileImage: "http://example3.com/image.jpg",
+        token: "",
+        refreshTokens: [""]
     },
 ];
 let app;

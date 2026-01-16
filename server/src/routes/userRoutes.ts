@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import userController from "../controllers/userController";
+import { authenticate } from "../middlewares/authMiddleware";
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ import userController from "../controllers/userController";
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.post("/", userController.create.bind(userController));
+router.post("/", authenticate, userController.create.bind(userController));
 
 /**
  * @swagger
@@ -80,7 +81,7 @@ router.post("/", userController.create.bind(userController));
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.delete("/:_id", userController.delete.bind(userController));
+router.delete("/:_id", authenticate, userController.delete.bind(userController));
 
 /**
  * @swagger
@@ -136,7 +137,7 @@ router.delete("/:_id", userController.delete.bind(userController));
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.put("/:_id", userController.update.bind(userController));
+router.put("/:_id", authenticate, userController.update.bind(userController));
 
 /**
  * @swagger
@@ -172,7 +173,7 @@ router.put("/:_id", userController.update.bind(userController));
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get("/", userController.get.bind(userController));
+router.get("/", authenticate, userController.get.bind(userController));
 
 /**
  * @swagger
@@ -202,6 +203,6 @@ router.get("/", userController.get.bind(userController));
  *       500:
  *         $ref: '#/components/responses/ServerError'
  */
-router.get("/:_id", userController.getById.bind(userController));
+router.get("/:_id", authenticate, userController.getById.bind(userController));
 
 export default router;

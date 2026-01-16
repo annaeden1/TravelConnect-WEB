@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const commentController_1 = __importDefault(require("../controllers/commentController"));
+const authMiddleware_1 = require("../middlewares/authMiddleware");
 /**
  * @swagger
  * tags:
@@ -34,7 +35,7 @@ const commentController_1 = __importDefault(require("../controllers/commentContr
  *       500:
  *         description: Internal server error
  */
-router.post("/", commentController_1.default.create.bind(commentController_1.default));
+router.post("/", authMiddleware_1.authenticate, commentController_1.default.create.bind(commentController_1.default));
 /**
  * @swagger
  * /comment/{_id}:
@@ -56,7 +57,7 @@ router.post("/", commentController_1.default.create.bind(commentController_1.def
  *       500:
  *         description: Internal server error
  */
-router.delete("/:_id", commentController_1.default.delete.bind(commentController_1.default));
+router.delete("/:_id", authMiddleware_1.authenticate, commentController_1.default.delete.bind(commentController_1.default));
 /**
  * @swagger
  * /comment/{_id}:
@@ -88,7 +89,7 @@ router.delete("/:_id", commentController_1.default.delete.bind(commentController
  *       500:
  *         description: Internal server error
  */
-router.put("/:_id", commentController_1.default.update.bind(commentController_1.default));
+router.put("/:_id", authMiddleware_1.authenticate, commentController_1.default.update.bind(commentController_1.default));
 /**
  * @swagger
  * /comment:
@@ -118,7 +119,7 @@ router.put("/:_id", commentController_1.default.update.bind(commentController_1.
  *       500:
  *         description: Internal server error
  */
-router.get("/", commentController_1.default.get.bind(commentController_1.default));
+router.get("/", authMiddleware_1.authenticate, commentController_1.default.get.bind(commentController_1.default));
 /**
  * @swagger
  * /comment/{_id}:
@@ -144,6 +145,6 @@ router.get("/", commentController_1.default.get.bind(commentController_1.default
  *       500:
  *         description: Internal server error
  */
-router.get("/:_id", commentController_1.default.getById.bind(commentController_1.default));
+router.get("/:_id", authMiddleware_1.authenticate, commentController_1.default.getById.bind(commentController_1.default));
 exports.default = router;
 //# sourceMappingURL=commentRoutes.js.map
