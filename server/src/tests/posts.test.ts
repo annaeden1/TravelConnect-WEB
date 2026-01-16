@@ -7,14 +7,17 @@ import { postModel } from "../models/postModel";
 const testData: PostData[] = [
   {
     content: "This is a test post",
+    imageUrl: "http://example.com/post-image.jpg",
     userCreatorID: "507f1f77bcf86cd799439011",
   },
   {
     content: "Another test post",
+    imageUrl: "http://example.com/post-image2.jpg",
     userCreatorID: "507f1f77bcf86cd799439012",
   },
   {
     content: "Yet another test post",
+    imageUrl: "http://example.com/post-image3.jpg",
     userCreatorID: "507f1f77bcf86cd799439013",
   },
 ];
@@ -50,7 +53,7 @@ describe("Post API Endpoints", () => {
         test("should update an existing post", async () => {
             const createRes = await request(app).post("/post").send(testData[0]);
             const postId = createRes.body._id;
-            const updatedContent = { content: "Updated post content" };
+            const updatedContent = { content: "Updated post content", imageUrl: "http://example.com/updated-image.jpg" };
             const res = await request(app).put(`/post/${postId}`).send(updatedContent);
             expect(res.statusCode).toEqual(200);
             expect(res.body.content).toBe(updatedContent.content);
