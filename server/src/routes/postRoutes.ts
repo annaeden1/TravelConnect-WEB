@@ -1,5 +1,6 @@
 import express from "express";
 import postController from "../controllers/postController";
+import { authenticate } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", postController.create.bind(postController));
+router.post("/", authenticate, postController.create.bind(postController));
 
 /**
  * @swagger
@@ -55,7 +56,7 @@ router.post("/", postController.create.bind(postController));
  *       500:
  *         description: Internal server error
  */
-router.delete("/:_id", postController.delete.bind(postController));
+router.delete("/:_id", authenticate, postController.delete.bind(postController));
 
 /**
  * @swagger
@@ -88,7 +89,7 @@ router.delete("/:_id", postController.delete.bind(postController));
  *       500:
  *         description: Internal server error
  */
-router.put("/:_id", postController.update.bind(postController));
+router.put("/:_id", authenticate, postController.update.bind(postController));
 
 /**
  * @swagger
@@ -114,7 +115,7 @@ router.put("/:_id", postController.update.bind(postController));
  *       500:
  *         description: Internal server error
  */
-router.get("/", postController.get.bind(postController));
+router.get("/", authenticate, postController.get.bind(postController));
 
 /**
  * @swagger
@@ -141,6 +142,6 @@ router.get("/", postController.get.bind(postController));
  *       500:
  *         description: Internal server error
  */
-router.get("/:_id", postController.getById.bind(postController));
+router.get("/:_id", authenticate, postController.getById.bind(postController));
 
 export default router;
