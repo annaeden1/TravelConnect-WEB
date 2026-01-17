@@ -10,6 +10,9 @@ const postSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    imageUrl: {
+        type: String,
+    },
     userCreatorID: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,

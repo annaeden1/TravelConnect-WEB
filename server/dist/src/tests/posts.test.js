@@ -20,14 +20,17 @@ let loginUser;
 const testData = [
     {
         content: "This is a test post",
+        imageUrl: "http://example.com/post-image.jpg",
         userCreatorID: "507f1f77bcf86cd799439011",
     },
     {
         content: "Another test post",
+        imageUrl: "http://example.com/post-image2.jpg",
         userCreatorID: "507f1f77bcf86cd799439012",
     },
     {
         content: "Yet another test post",
+        imageUrl: "http://example.com/post-image3.jpg",
         userCreatorID: "507f1f77bcf86cd799439013",
     },
 ];
