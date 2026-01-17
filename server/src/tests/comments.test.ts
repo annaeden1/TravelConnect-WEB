@@ -2,9 +2,10 @@ import request from "supertest";
 import intApp from "../index";
 import { Express } from "express";
 import { commentModel } from "../models/commentModel";
-import mongoose from "mongoose";
 import { CommentData } from "./types/commentData.type";
+import { getLoggedInUser, UserData } from "./types/userData";
 
+let loginUser: UserData;
 const testData: CommentData[] = [
   {
     relatedPostID: "648a1f4e2f8fb814c8a1e1a1",
@@ -24,8 +25,10 @@ const testData: CommentData[] = [
 ];
 
 let app: Express;
+
 beforeAll(async () => {
   app = await intApp();
+  loginUser = await getLoggedInUser(app);
 });
 beforeEach(async () => {
   await commentModel.deleteMany({});
@@ -37,7 +40,7 @@ afterAll(async () => {
 describe("Comment API Endpoints", () => {
   test("should create a new comment", async () => {
     for (const data of testData) {
-      const res = await request(app).post("/comment").send(data);
+      const res = await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
       expect(res.statusCode).toEqual(201);
       expect(res.body).toHaveProperty("_id");
       expect(res.body.description).toBe(data.description);
@@ -48,21 +51,21 @@ describe("Comment API Endpoints", () => {
 
   test("should retrieve all comments", async () => {
     for (const data of testData) {
-      await request(app).post("/comment").send(data);
+      await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
     }
-    const res = await request(app).get("/comment");
+    const res = await request(app).get("/comment").set("Authorization", "Bearer " + loginUser.token);
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toBe(testData.length);
   });
 
   test("should retrieve comments for a specific post", async () => {
     for (const data of testData) {
-      await request(app).post("/comment").send(data);
+      await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(data);
     }
     const relatedPostID = testData[0].relatedPostID;
     const res = await request(app).get(
       `/comment?relatedPostID=${relatedPostID}`
-    );
+    ).set("Authorization", "Bearer " + loginUser.token);
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toBe(1);
     expect(res.body[0].relatedPostID).toBe(relatedPostID);
@@ -70,30 +73,30 @@ describe("Comment API Endpoints", () => {
 });
 
 test("should retrieve a comment by ID", async () => {
-  const createRes = await request(app).post("/comment").send(testData[0]);
+  const createRes = await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
   const commentId = createRes.body._id;
-  const res = await request(app).get(`/comment/${commentId}`);
+  const res = await request(app).get(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
   expect(res.statusCode).toEqual(200);
   expect(res.body._id).toBe(commentId);
   expect(res.body.description).toBe(testData[0].description);
 });
 
 test("should update a comment by ID", async () => {
-  const createRes = await request(app).post("/comment").send(testData[0]);
+  const createRes = await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
   const commentId = createRes.body._id;
   const updatedData = {
     description: "Updated comment description",
   };
-  const res = await request(app).put(`/comment/${commentId}`).send(updatedData);
+  const res = await request(app).put(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token).send(updatedData);
   expect(res.statusCode).toEqual(200);
   expect(res.body.description).toBe(updatedData.description);
 });
 
 test("should delete a comment by ID", async () => {
-  const createRes = await request(app).post("/comment").send(testData[0]);
+  const createRes = await request(app).post("/comment").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
   const commentId = createRes.body._id;
-  const res = await request(app).delete(`/comment/${commentId}`);
+  const res = await request(app).delete(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
   expect(res.statusCode).toEqual(200);
-  const getRes = await request(app).get(`/comment/${commentId}`);
+  const getRes = await request(app).get(`/comment/${commentId}`).set("Authorization", "Bearer " + loginUser.token);
   expect(getRes.statusCode).toEqual(404);
 });

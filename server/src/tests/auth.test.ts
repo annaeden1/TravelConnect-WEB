@@ -2,25 +2,32 @@ import request from "supertest";
 import intApp from "../index";
 import { userModel } from "../models/userModel";
 import { Express } from "express";
-import { UserData } from "./types/userData.type";
+import { UserData } from "./types/userData";
 
 const testData: UserData[] = [
   {
     username: "John Doeeeee",
     email: "john@example.com",
     password: "password123",
-    profileImage: "http://example.com/image.jpg"
+    profileImage: "http://example.com/image.jpg",
+    token: "",
+    refreshTokens: [""]
   },
   {
     username: "Jane Smith",
     email: "jane@example.com",
     profileImage: "http://example2.com/image.jpg",
     password: "password456",
+    token: "",
+    refreshTokens: [""]
   },
   {
     username: "Alice Johnson",
     email: "alice@example.com",
     password: "password789",
+    profileImage: "http://example3.com/image.jpg",
+    token: "",
+    refreshTokens: [""]
   },
 ];
 

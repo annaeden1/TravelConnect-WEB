@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const postController_1 = __importDefault(require("../controllers/postController"));
+const authMiddleware_1 = require("../middlewares/authMiddleware");
 const router = express_1.default.Router();
 /**
  * @swagger
@@ -34,7 +35,7 @@ const router = express_1.default.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", postController_1.default.create.bind(postController_1.default));
+router.post("/", authMiddleware_1.authenticate, postController_1.default.create.bind(postController_1.default));
 /**
  * @swagger
  * /post/{_id}:
@@ -56,7 +57,7 @@ router.post("/", postController_1.default.create.bind(postController_1.default))
  *       500:
  *         description: Internal server error
  */
-router.delete("/:_id", postController_1.default.delete.bind(postController_1.default));
+router.delete("/:_id", authMiddleware_1.authenticate, postController_1.default.delete.bind(postController_1.default));
 /**
  * @swagger
  * /post/{_id}:
@@ -88,7 +89,7 @@ router.delete("/:_id", postController_1.default.delete.bind(postController_1.def
  *       500:
  *         description: Internal server error
  */
-router.put("/:_id", postController_1.default.update.bind(postController_1.default));
+router.put("/:_id", authMiddleware_1.authenticate, postController_1.default.update.bind(postController_1.default));
 /**
  * @swagger
  * /post:
@@ -113,7 +114,7 @@ router.put("/:_id", postController_1.default.update.bind(postController_1.defaul
  *       500:
  *         description: Internal server error
  */
-router.get("/", postController_1.default.get.bind(postController_1.default));
+router.get("/", authMiddleware_1.authenticate, postController_1.default.get.bind(postController_1.default));
 /**
  * @swagger
  * /post/{_id}:
@@ -139,6 +140,6 @@ router.get("/", postController_1.default.get.bind(postController_1.default));
  *       500:
  *         description: Internal server error
  */
-router.get("/:_id", postController_1.default.getById.bind(postController_1.default));
+router.get("/:_id", authMiddleware_1.authenticate, postController_1.default.getById.bind(postController_1.default));
 exports.default = router;
 //# sourceMappingURL=postRoutes.js.map
