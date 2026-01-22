@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, type NavigateFunction, type Location } from "react-router";
 import {
   Box,
   Divider,
@@ -22,8 +22,8 @@ type NavbarProps = {
 };
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate : NavigateFunction = useNavigate();
+  const location : Location = useLocation();
 
   const navItems : NavbarProps[] = [
     { label: "Home", path: ClientRoutes.HOME, icon: <HomeOutlinedIcon /> },
