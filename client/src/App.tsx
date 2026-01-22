@@ -1,35 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router";
+import Navbar from "./components/Navbar";
+import Home from "./pages/HomePage";
+import AIAssistant from "./pages/AIAssistantPage";
+import CreatePost from "./pages/CreatePostPage";
+import Profile from "./pages/ProfilePage";
+import ClientRoutes from "./utils/appRoutes";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route index path={ClientRoutes.HOME} element={<Home />} />
+          <Route path={ClientRoutes.AI} element={<AIAssistant />} />
+          <Route path={ClientRoutes.POST} element={<CreatePost />} />
+          <Route path={ClientRoutes.PROFILE} element={<Profile />} />
+        </Routes>
+      </BrowserRouter>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
