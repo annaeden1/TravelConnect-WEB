@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router";
-import Navbar from "./components/Navbar";
+import Layout from "./components/Layout";
 import Home from "./pages/HomePage";
 import AIAssistant from "./pages/AIAssistantPage";
 import CreatePost from "./pages/CreatePostPage";
@@ -11,12 +11,13 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
-        <Navbar />
         <Routes>
-          <Route index path={ClientRoutes.HOME} element={<Home />} />
-          <Route path={ClientRoutes.AI} element={<AIAssistant />} />
-          <Route path={ClientRoutes.POST} element={<CreatePost />} />
-          <Route path={ClientRoutes.PROFILE} element={<Profile />} />
+          <Route element={<Layout />}>
+            <Route index path={ClientRoutes.HOME} element={<Home />} />
+            <Route path={ClientRoutes.AI} element={<AIAssistant />} />
+            <Route path={ClientRoutes.POST} element={<CreatePost />} />
+            <Route path={ClientRoutes.PROFILE} element={<Profile />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>
