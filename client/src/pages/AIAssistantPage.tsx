@@ -18,7 +18,7 @@ import type { Message } from "../types/chat";
 import { sendMessageToAI, createUserMessage } from "../services/aiService";
 import { ChatMessage } from "../components/chat";
 
-const AiChatPage = () => {
+const AIAssistant = () => {
   const [userMessage, setUserMessage] = useState<Message | null>(null);
   const [aiResponse, setAiResponse] = useState<Message | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -252,5 +252,4 @@ const AiChatPage = () => {
     </Box>
   );
 };
-
-export default AiChatPage;
+export default AIAssistant;

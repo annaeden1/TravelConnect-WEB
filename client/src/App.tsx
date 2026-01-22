@@ -1,24 +1,26 @@
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import AiChatPage from './pages/AiChatPage';
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router";
+import Navbar from "./components/Navbar";
+import Home from "./pages/HomePage";
+import AIAssistant from "./pages/AIAssistantPage";
+import CreatePost from "./pages/CreatePostPage";
+import Profile from "./pages/ProfilePage";
+import ClientRoutes from "./utils/appRoutes";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#9c27b0',
-    },
-  },
-});
-
-function App() {
+const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AiChatPage />
-    </ThemeProvider>
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route index path={ClientRoutes.HOME} element={<Home />} />
+          <Route path={ClientRoutes.AI} element={<AIAssistant />} />
+          <Route path={ClientRoutes.POST} element={<CreatePost />} />
+          <Route path={ClientRoutes.PROFILE} element={<Profile />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
-}
+};
 
 export default App;
