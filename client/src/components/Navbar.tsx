@@ -11,6 +11,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import ClientRoutes from "../utils/appRoutes";
 
 
 const Navbar = () => {
@@ -18,10 +19,10 @@ const Navbar = () => {
   const location = useLocation();
 
   const navItems = [
-    { label: "Home", path: "/home", icon: <HomeOutlinedIcon /> },
-    { label: "AI Assistant", path: "/ai", icon: <ChatBubbleOutlineOutlinedIcon /> },
-    { label: "Create Post", path: "/createPost", icon: <AddBoxOutlinedIcon /> },
-    { label: "Profile", path: "/profile", icon: <PersonOutlineOutlinedIcon /> },
+    { label: "Home", path: ClientRoutes.HOME, icon: <HomeOutlinedIcon /> },
+    { label: "AI Assistant", path: ClientRoutes.AI, icon: <ChatBubbleOutlineOutlinedIcon /> },
+    { label: "Create Post", path: ClientRoutes.POST, icon: <AddBoxOutlinedIcon /> },
+    { label: "Profile", path: ClientRoutes.PROFILE, icon: <PersonOutlineOutlinedIcon /> },
   ];
 
   const currentValue = navItems.findIndex(item => item.path === location.pathname);
