@@ -27,7 +27,7 @@ const Navbar = () => {
         flexDirection: "column",
       }}
     >
-      <Box sx={{ p: "0.5rem", textAlign: "center" }}>
+      <Box sx={{ p: "0.5rem", textAlign: "center", height: "3rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#0ea5e9" }}>
           TravelConnect
         </Typography>
