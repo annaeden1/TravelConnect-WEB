@@ -4,7 +4,7 @@ import { Box, CircularProgress, Typography, Stack } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ChatMessage from "./ChatMessage";
-import type { Message } from "../../types/chat";
+import type { Message } from "../../utils/types/chat";
 
 interface ChatMessageListProps {
   messages: Message[];
@@ -49,11 +49,7 @@ const ChatMessageList = ({
 
   return (
     <Box>
-      <Typography
-        variant="h6"
-        fontWeight="bold"
-        sx={{ marginBottom: "1rem" }}
-      >
+      <Typography variant="h6" fontWeight="bold" sx={{ marginBottom: "1rem" }}>
         {title}
       </Typography>
 

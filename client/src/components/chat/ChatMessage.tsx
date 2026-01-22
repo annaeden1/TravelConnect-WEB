@@ -2,7 +2,7 @@ import { Box, Avatar, Typography, Paper } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import type { ReactNode } from "react";
-import type { Message } from "../../types/chat";
+import type { Message } from "../../utils/types/chat";
 
 interface ChatMessageProps {
   message: Message;

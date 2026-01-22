@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import SendIcon from "@mui/icons-material/Send";
-import type { Message } from "../types/chat";
+import type { Message } from "../utils/types/chat";
 import { sendMessageToAI, createUserMessage } from "../services/aiService";
 import { ChatMessage } from "../components/chat";
 
@@ -55,7 +55,7 @@ const AIAssistant = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: "100%",
         bgcolor: "#fafafa",
       }}
     >
