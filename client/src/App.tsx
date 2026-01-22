@@ -1,10 +1,10 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import Navbar from "./components/Navbar";
-import Home from "./components/pages/HomePage";
-import AIAssistant from "./components/pages/AIAssistantPage";
-import CreatePost from "./components/pages/CreatePostPage";
-import Profile from "./components/pages/ProfilePage";
+import Home from "./pages/HomePage";
+import AIAssistant from "./pages/AIAssistantPage";
+import CreatePost from "./pages/CreatePostPage";
+import Profile from "./pages/ProfilePage";
 import ClientRoutes from "./utils/appRoutes";
 
 const App = () => {
