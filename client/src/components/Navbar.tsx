@@ -35,8 +35,8 @@ const Navbar = () => {
   const currentValue = navItems.findIndex(item => item.path === location.pathname);
 
   return (
-    <Drawer variant="permanent" anchor="left" sx={{ width: 280, flexShrink: 0 }}>
-      <Box sx={{ p: 2, textAlign: "center" }}>
+    <Drawer variant="permanent" anchor="left" sx={{ width: "17.5rem", flexShrink: 0 }}>
+      <Box sx={{ p: "0.5rem", textAlign: "center" }}>
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#1976d2" }}>
           TravelConnect
         </Typography>
@@ -61,10 +61,10 @@ const Navbar = () => {
               textTransform: "none",
               fontSize: "1rem",
               justifyContent: "flex-start",
-              p: 1,
-              m: 0.75,
-              borderRadius: 2,
-              minHeight: 48,
+              p: "0.75rem",
+              m: "0.5rem",
+              borderRadius: "0.5rem",
+              minHeight: "3.5rem",
               backgroundColor: "transparent",
               transition: "all 0.3s ease",
               color: "#000000ff", 
