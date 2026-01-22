@@ -6,19 +6,26 @@ import {
   Tab,
   Tabs,
   Typography,
+  type SvgIconTypeMap,
 } from "@mui/material";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ClientRoutes from "../utils/appRoutes";
+import React from "react";
 
+type NavbarProps = {
+    label: string;
+    path: string;
+    icon: React.ReactElement<SvgIconTypeMap>;
+};
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navItems = [
+  const navItems : NavbarProps[] = [
     { label: "Home", path: ClientRoutes.HOME, icon: <HomeOutlinedIcon /> },
     { label: "AI Assistant", path: ClientRoutes.AI, icon: <ChatBubbleOutlineOutlinedIcon /> },
     { label: "Create Post", path: ClientRoutes.POST, icon: <AddBoxOutlinedIcon /> },
