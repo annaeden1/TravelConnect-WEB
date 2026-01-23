@@ -132,4 +132,29 @@ describe("Post API Endpoints", () => {
             expect(res.body).toHaveProperty("error", "Item with id 609e129e1c4ae12f34567890 not found");
         });
     });
+
+    describe("handleLike", () => {
+        test("should like a post", async () => {
+            const createRes = await request(app).post("/post").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
+            const postId = createRes.body._id;
+            const res = await request(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty("likesCount", 1);
+        });
+
+        test("should unlike a post", async () => {
+            const createRes = await request(app).post("/post").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
+            const postId = createRes.body._id;
+            await request(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            const res = await request(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty("likesCount", 0);
+        });
+
+        test("should return 404 for non-existing post ID", async () => {
+            const res = await request(app).post("/post/handle-like/609e129e1c4ae12f34567890").set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toHaveProperty("error", "Post with id 609e129e1c4ae12f34567890 not found");
+        });
+    });
 });

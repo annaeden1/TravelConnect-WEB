@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLoggedInUser = exports.userData = void 0;
 const supertest_1 = __importDefault(require("supertest"));
 exports.userData = {
+    _id: "507f1f77bcf86cd799439014",
     username: "testuser",
     email: "test@test.com",
     password: "testpass",
