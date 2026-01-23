@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import Home from "./pages/HomePage";
 import AIAssistant from "./pages/AIAssistantPage";
@@ -13,7 +13,8 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route index path={ClientRoutes.HOME} element={<Home />} />
+            <Route index element={<Navigate to={ClientRoutes.HOME} replace />} />
+            <Route path={ClientRoutes.HOME} element={<Home />} />
             <Route path={ClientRoutes.AI} element={<AIAssistant />} />
             <Route path={ClientRoutes.POST} element={<CreatePost />} />
             <Route path={ClientRoutes.PROFILE} element={<Profile />} />
