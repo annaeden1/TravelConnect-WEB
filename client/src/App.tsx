@@ -1,5 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Layout from "./components/Layout";
 import Home from "./pages/HomePage";
 import AIAssistant from "./pages/AIAssistantPage";
@@ -10,6 +12,7 @@ import ClientRoutes from "./utils/appRoutes";
 const App = () => {
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
