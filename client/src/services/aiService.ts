@@ -1,27 +1,22 @@
 import type { Message } from "../utils/types/chat";
+import apiClient from "./apiClient";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+interface ChatResponse {
+  response: string;
+  timestamp: string;
+}
 
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
 };
 
 export const sendMessageToAI = async (
-  userMessage: string,
+  userMessage: string
 ): Promise<Message> => {
-  const response = await fetch(`${API_BASE_URL}/ai/chat`, {
+  const data = await apiClient<ChatResponse>("/ai/chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message: userMessage }),
+    body: { message: userMessage },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to get AI response");
-  }
-
-  const data = await response.json();
 
   return {
     id: generateId(),
