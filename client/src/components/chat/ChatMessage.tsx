@@ -1,19 +1,10 @@
 import { Box, Avatar, Typography, Paper } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import type { ReactNode } from "react";
-import type { Message } from "../../utils/types/chat";
+import type { Message, ChatStylingProps } from "../../utils/types/chat";
 
-interface ChatMessageProps {
+interface ChatMessageProps extends ChatStylingProps {
   message: Message;
-  userIcon?: ReactNode;
-  assistantIcon?: ReactNode;
-  userLabel?: string;
-  assistantLabel?: string;
-  userBgColor?: string;
-  assistantBgColor?: string;
-  userAvatarColor?: string;
-  assistantAvatarColor?: string;
 }
 
 const ChatMessage = ({

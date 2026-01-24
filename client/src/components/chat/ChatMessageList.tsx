@@ -1,24 +1,15 @@
 import { useEffect, useRef } from "react";
-import type { ReactNode } from "react";
 import { Box, CircularProgress, Typography, Stack } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ChatMessage from "./ChatMessage";
-import type { Message } from "../../utils/types/chat";
+import type { Message, ChatStylingProps } from "../../utils/types/chat";
 
-interface ChatMessageListProps {
+interface ChatMessageListProps extends ChatStylingProps {
   messages: Message[];
   isLoading: boolean;
   loadingText?: string;
   title?: string;
-  userIcon?: ReactNode;
-  assistantIcon?: ReactNode;
-  userLabel?: string;
-  assistantLabel?: string;
-  userBgColor?: string;
-  assistantBgColor?: string;
-  userAvatarColor?: string;
-  assistantAvatarColor?: string;
   loadingColor?: string;
 }
 
