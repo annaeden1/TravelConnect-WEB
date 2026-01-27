@@ -13,6 +13,10 @@ const postSchema = new mongoose_1.default.Schema({
     imageUrl: {
         type: String,
     },
+    likes: {
+        type: [mongoose_1.default.Schema.Types.ObjectId],
+        default: []
+    },
     userCreatorID: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,

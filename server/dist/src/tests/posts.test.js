@@ -19,19 +19,25 @@ const userData_1 = require("./types/userData");
 let loginUser;
 const testData = [
     {
+        _id: "69590fb18974fd6b3614707c",
         content: "This is a test post",
         imageUrl: "http://example.com/post-image.jpg",
         userCreatorID: "507f1f77bcf86cd799439011",
+        likes: []
     },
     {
+        _id: "69590fb18974fd6b3614707d",
         content: "Another test post",
         imageUrl: "http://example.com/post-image2.jpg",
         userCreatorID: "507f1f77bcf86cd799439012",
+        likes: []
     },
     {
+        _id: "69590fb18974fd6b3614707e",
         content: "Yet another test post",
         imageUrl: "http://example.com/post-image3.jpg",
         userCreatorID: "507f1f77bcf86cd799439013",
+        likes: []
     },
 ];
 let app;
@@ -126,6 +132,28 @@ describe("Post API Endpoints", () => {
             const res = yield (0, supertest_1.default)(app).delete("/post/609e129e1c4ae12f34567890").set("Authorization", "Bearer " + loginUser.token);
             expect(res.statusCode).toEqual(404);
             expect(res.body).toHaveProperty("error", "Item with id 609e129e1c4ae12f34567890 not found");
+        }));
+    });
+    describe("handleLike", () => {
+        test("should like a post", () => __awaiter(void 0, void 0, void 0, function* () {
+            const createRes = yield (0, supertest_1.default)(app).post("/post").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
+            const postId = createRes.body._id;
+            const res = yield (0, supertest_1.default)(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty("likesCount", 1);
+        }));
+        test("should unlike a post", () => __awaiter(void 0, void 0, void 0, function* () {
+            const createRes = yield (0, supertest_1.default)(app).post("/post").set("Authorization", "Bearer " + loginUser.token).send(testData[0]);
+            const postId = createRes.body._id;
+            yield (0, supertest_1.default)(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            const res = yield (0, supertest_1.default)(app).post(`/post/handle-like/${postId}`).set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty("likesCount", 0);
+        }));
+        test("should return 404 for non-existing post ID", () => __awaiter(void 0, void 0, void 0, function* () {
+            const res = yield (0, supertest_1.default)(app).post("/post/handle-like/609e129e1c4ae12f34567890").set("Authorization", "Bearer " + loginUser.token).send({ userId: loginUser._id });
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toHaveProperty("error", "Post with id 609e129e1c4ae12f34567890 not found");
         }));
     });
 });

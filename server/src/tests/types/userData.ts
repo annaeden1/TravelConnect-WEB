@@ -2,6 +2,7 @@ import { type Express } from "express";
 import request from "supertest";
 
 export type UserData = {
+  _id?: string;
   username: string;
   email: string;
   password: string;
@@ -11,6 +12,7 @@ export type UserData = {
 };
 
 export const userData = {
+    _id: "507f1f77bcf86cd799439014",
     username: "testuser",
     email: "test@test.com",
     password: "testpass",
@@ -29,7 +31,7 @@ export const getLoggedInUser = async (app: Express): Promise<UserData> => {
         response = await request(app).post("/auth/login").send(
             { "email": email, "password": password });
     }
-    const loggedInUser = {
+    const loggedInUser: UserData = {
         _id: response.body._id,
         token: response.body.accessToken,
         email: email,
