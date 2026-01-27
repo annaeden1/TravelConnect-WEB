@@ -1,7 +1,7 @@
 import { Box, Typography, Stack, Avatar, CircularProgress } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import type { Message } from "../../utils/types/chat";
-import { ChatMessage } from "../chat";
+import ChatMessage from "./ChatMessage";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -64,7 +64,7 @@ const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
                   p: "1rem",
                 }}
               >
-                <CircularProgress size={20} sx={{ color: "#0ea5e9" }} />
+                <CircularProgress size="1.25rem" sx={{ color: "#0ea5e9" }} />
                 <Typography variant="body2" color="text.secondary">
                   AI is thinking...
                 </Typography>
