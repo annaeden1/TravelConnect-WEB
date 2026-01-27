@@ -22,13 +22,68 @@ const AIAssistant = () => {
   const currentSession = chatSessions.find((s) => s.id === currentSessionId);
   const hasUserMessage = currentSession && currentSession.messages.length > 0;
 
-  const handleNewChat = () => {
-    const newSession: ChatSession = {
+  const generateSessionTitle = (message: string): string => {
+    return message.slice(0, 30) + (message.length > 30 ? "..." : "");
+  };
+
+  const createNewSession = (title: string): ChatSession => {
+    return {
       id: crypto.randomUUID(),
-      title: "New Chat",
+      title,
       messages: [],
       createdAt: new Date(),
     };
+  };
+
+  const ensureSessionExists = (message: string): string => {
+    if (currentSessionId) {
+      return currentSessionId;
+    }
+
+    const newSession = createNewSession(generateSessionTitle(message));
+    setChatSessions((prev) => [newSession, ...prev]);
+    setCurrentSessionId(newSession.id);
+    return newSession.id;
+  };
+
+  const addUserMessageToSession = (
+    sessionId: string,
+    userMessage: Message,
+    messageText: string,
+  ) => {
+    setChatSessions((prev) =>
+      prev.map((session) => {
+        if (session.id === sessionId) {
+          return {
+            ...session,
+            messages: [...session.messages, userMessage],
+            title:
+              session.title === "New Chat"
+                ? generateSessionTitle(messageText)
+                : session.title,
+          };
+        }
+        return session;
+      }),
+    );
+  };
+
+  const addAIResponseToSession = (sessionId: string, response: Message) => {
+    setChatSessions((prev) =>
+      prev.map((session) => {
+        if (session.id === sessionId) {
+          return {
+            ...session,
+            messages: [...session.messages, response],
+          };
+        }
+        return session;
+      }),
+    );
+  };
+
+  const handleNewChat = () => {
+    const newSession = createNewSession("New Chat");
     setChatSessions((prev) => [newSession, ...prev]);
     setCurrentSessionId(newSession.id);
     setInputValue("");
@@ -37,56 +92,18 @@ const AIAssistant = () => {
   const handleSubmit = async () => {
     if (!inputValue.trim() || isLoading || hasUserMessage) return;
 
-    let sessionId = currentSessionId;
-
-    if (!sessionId) {
-      const newSession: ChatSession = {
-        id: crypto.randomUUID(),
-        title: inputValue.slice(0, 30) + (inputValue.length > 30 ? "..." : ""),
-        messages: [],
-        createdAt: new Date(),
-      };
-      setChatSessions((prev) => [newSession, ...prev]);
-      sessionId = newSession.id;
-      setCurrentSessionId(sessionId);
-    }
-
+    const sessionId = ensureSessionExists(inputValue);
     const userMessage = createUserMessage(inputValue);
     const messageText = inputValue;
+
     setInputValue("");
     setIsLoading(true);
 
-    setChatSessions((prev) =>
-      prev.map((session) => {
-        if (session.id === sessionId) {
-          const updatedMessages = [...session.messages, userMessage];
-          return {
-            ...session,
-            messages: updatedMessages,
-            title:
-              session.title === "New Chat"
-                ? messageText.slice(0, 30) +
-                  (messageText.length > 30 ? "..." : "")
-                : session.title,
-          };
-        }
-        return session;
-      })
-    );
+    addUserMessageToSession(sessionId, userMessage, messageText);
 
     try {
       const response = await sendMessageToAI(messageText);
-      setChatSessions((prev) =>
-        prev.map((session) => {
-          if (session.id === sessionId) {
-            return {
-              ...session,
-              messages: [...session.messages, response],
-            };
-          }
-          return session;
-        })
-      );
+      addAIResponseToSession(sessionId, response);
     } catch {
       toast.error("Failed to get AI response. Please try again.");
     } finally {
