@@ -2,7 +2,6 @@ import { useNavigate, useLocation, type NavigateFunction, type Location } from "
 import {
   Box,
   Divider,
-  Drawer,
   Tab,
   Tabs,
   Typography,
@@ -16,9 +15,20 @@ const Navbar = () => {
   const currentValue = navItems.findIndex(item => item.path === location.pathname);
 
   return (
-    <Drawer variant="permanent" anchor="left" sx={{ width: "17.5rem", flexShrink: 0 }}>
-      <Box sx={{ p: "0.5rem", textAlign: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", color: "#1976d2" }}>
+    <Box
+      component="nav"
+      sx={{
+        width: "17.5rem",
+        flexShrink: 0,
+        height: "100vh",
+        borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+        bgcolor: "#ffffff",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ p: "0.5rem", textAlign: "center", height: "3rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Typography variant="h5" sx={{ fontWeight: "bold", color: "#0ea5e9" }}>
           TravelConnect
         </Typography>
       </Box>
@@ -52,7 +62,7 @@ const Navbar = () => {
                 transition: "all 0.3s ease",
                 color: "#000000ff", 
                 "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
+                  backgroundColor: "#0ea5e9",
                   color: "#ffffff",
                   fontWeight: "bold",
                 }
@@ -61,7 +71,7 @@ const Navbar = () => {
           );
         })}
       </Tabs>
-    </Drawer>
+    </Box>
   );
 };
 
