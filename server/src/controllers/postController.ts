@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { postModel, type IPost } from "../models/postModel";
 import genericController from "./genericController";
 import type { Request, Response } from "express";
@@ -18,8 +19,8 @@ class postController extends genericController<IPost> {
       }
 
       const userLiked = post.likes?.includes(userId) ?? false;
-      const updateOp = userLiked ? { $pull: { likes: userId } } : { $push: { likes: userId } };
-
+      const userObjectId = Types.ObjectId.createFromHexString(String(userId));
+      const updateOp = userLiked ? { $pull: { likes: userObjectId } } : { $push: { likes: userObjectId } };
       const updatedPost = await this.model.findByIdAndUpdate(postId, updateOp, { new: true });
       res.status(200).json({ likesCount: updatedPost?.likes?.length || 0 });
     } catch (error) {

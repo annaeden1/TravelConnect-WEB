@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = require("mongoose");
 const postModel_1 = require("../models/postModel");
 const genericController_1 = __importDefault(require("./genericController"));
 class postController extends genericController_1.default {
@@ -29,7 +30,8 @@ class postController extends genericController_1.default {
                     return res.status(404).json({ error: `Post with id ${postId} not found` });
                 }
                 const userLiked = (_b = (_a = post.likes) === null || _a === void 0 ? void 0 : _a.includes(userId)) !== null && _b !== void 0 ? _b : false;
-                const updateOp = userLiked ? { $pull: { likes: userId } } : { $push: { likes: userId } };
+                const userObjectId = mongoose_1.Types.ObjectId.createFromHexString(String(userId));
+                const updateOp = userLiked ? { $pull: { likes: userObjectId } } : { $push: { likes: userObjectId } };
                 const updatedPost = yield this.model.findByIdAndUpdate(postId, updateOp, { new: true });
                 res.status(200).json({ likesCount: ((_c = updatedPost === null || updatedPost === void 0 ? void 0 : updatedPost.likes) === null || _c === void 0 ? void 0 : _c.length) || 0 });
             }

@@ -19,19 +19,25 @@ const userData_1 = require("./types/userData");
 let loginUser;
 const testData = [
     {
+        _id: "69590fb18974fd6b3614707c",
         content: "This is a test post",
         imageUrl: "http://example.com/post-image.jpg",
         userCreatorID: "507f1f77bcf86cd799439011",
+        likes: []
     },
     {
+        _id: "69590fb18974fd6b3614707d",
         content: "Another test post",
         imageUrl: "http://example.com/post-image2.jpg",
         userCreatorID: "507f1f77bcf86cd799439012",
+        likes: []
     },
     {
+        _id: "69590fb18974fd6b3614707e",
         content: "Yet another test post",
         imageUrl: "http://example.com/post-image3.jpg",
         userCreatorID: "507f1f77bcf86cd799439013",
+        likes: []
     },
 ];
 let app;
