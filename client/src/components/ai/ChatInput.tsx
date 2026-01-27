@@ -65,7 +65,7 @@ const ChatInput = ({
             disabled={isLoading || !value.trim() || isDisabled}
             endIcon={
               isLoading ? (
-                <CircularProgress size={18} color="inherit" />
+                <CircularProgress size="1.125rem" color="inherit" />
               ) : (
                 <SendIcon />
               )
