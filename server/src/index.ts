@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config({ path: ".env.dev" });
 import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
@@ -12,6 +13,10 @@ const app = express();
 
 const intApp = () => {
   return new Promise<Express>((resolve, reject) => {
+    // Enable CORS for client requests
+    app.use(cors({
+      origin: ["http://localhost:5173", "http://localhost:5174"],
+      credentials: true    }));
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
 
