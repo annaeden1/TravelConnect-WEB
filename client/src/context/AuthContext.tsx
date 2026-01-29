@@ -67,6 +67,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
+  const setAuthState = (tokens: StoredTokens, userData: User) => {
+    storeTokens(tokens);
+    storeUser(userData);
+    setAccessToken(tokens.accessToken);
+    setUser(userData);
+  };
+
   const login = async (email: string, password: string) => {
     const response: LoginResponse = await authService.login(email, password);
 
@@ -77,11 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email: email,
     };
 
-    storeTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken });
-    storeUser(userData);
-
-    setAccessToken(response.accessToken);
-    setUser(userData);
+    setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
   };
 
   const register = async (email: string, username: string, password: string) => {
@@ -94,11 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email: email,
     };
 
-    storeTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken });
-    storeUser(userData);
-
-    setAccessToken(response.accessToken);
-    setUser(userData);
+    setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
   };
 
   const logout = async () => {
