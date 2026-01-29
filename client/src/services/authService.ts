@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:3000";
+import axios, { AxiosError } from 'axios';
+
+const API_BASE_URL = 'http://localhost:3000';
 
 export type AuthTokens = {
   accessToken: string;
@@ -17,66 +19,63 @@ export type ApiError = {
   error: string;
 };
 
+const authApi = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (error instanceof AxiosError && error.response?.data?.error) {
+    return error.response.data.error;
+  }
+  return fallback;
+};
+
 const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Login failed");
+    try {
+      const { data } = await authApi.post<LoginResponse>('/auth/login', {
+        email,
+        password,
+      });
+      return data;
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Login failed'));
     }
-
-    return data;
   },
 
   async register(email: string, username: string, password: string): Promise<RegisterResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, username, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Registration failed");
+    try {
+      const { data } = await authApi.post<RegisterResponse>('/auth/register', {
+        email,
+        username,
+        password,
+      });
+      return data;
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Registration failed'));
     }
-
-    return data;
   },
 
   async logout(refreshToken: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || "Logout failed");
+    try {
+      await authApi.post('/auth/logout', { refreshToken });
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Logout failed'));
     }
   },
 
   async refreshToken(refreshToken: string): Promise<AuthTokens & { _id: string }> {
-    const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Token refresh failed");
+    try {
+      const { data } = await authApi.post<AuthTokens & { _id: string }>('/auth/refresh-token', {
+        refreshToken,
+      });
+      return data;
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Token refresh failed'));
     }
-
-    return data;
   },
 };
 
