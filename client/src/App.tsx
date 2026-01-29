@@ -1,5 +1,8 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Layout from "./components/Layout";
 import Navbar from "./components/Navbar";
 import Home from "./pages/HomePage";
 import AIAssistant from "./pages/AIAssistantPage";
@@ -15,14 +18,18 @@ const AppContent = () => {
 
   return (
     <>
-      {!isLoginPage && <Navbar />}
-      <Routes>
-        <Route index path={ClientRoutes.HOME} element={<Home />} />
-        <Route path={ClientRoutes.AI} element={<AIAssistant />} />
-        <Route path={ClientRoutes.POST} element={<CreatePost />} />
-        <Route path={ClientRoutes.PROFILE} element={<Profile />} />
-        <Route path={ClientRoutes.LOGIN} element={<LoginPage />} />
-      </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <BrowserRouter>
+        {!isLoginPage && <Navbar />}
+        <Routes>
+          <Route element={<Layout />}>
+          <Route index path={ClientRoutes.HOME} element={<Home />} />
+          <Route path={ClientRoutes.AI} element={<AIAssistant />} />
+          <Route path={ClientRoutes.POST} element={<CreatePost />} />
+          <Route path={ClientRoutes.PROFILE} element={<Profile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 };

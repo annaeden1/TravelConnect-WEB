@@ -1,5 +1,6 @@
 import express, { type Express } from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config({ path: ".env.dev" });
@@ -7,6 +8,7 @@ import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
+import aiRoutes from "./routes/aiRoutes";
 import { specs, swaggerUi } from "./swagger";
 
 const app = express();
@@ -17,6 +19,7 @@ const intApp = () => {
     app.use(cors({
       origin: ["http://localhost:5173", "http://localhost:5174"],
       credentials: true    }));
+    app.use(cors());
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
 
@@ -39,6 +42,7 @@ const intApp = () => {
     app.use("/comment", commentRoutes);
     app.use("/user", userRoutes);
     app.use("/auth", authRoutes);
+    app.use("/ai", aiRoutes);
 
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
