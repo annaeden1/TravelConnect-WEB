@@ -105,8 +105,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (tokens?.refreshToken) {
       try {
         await authService.logout(tokens.refreshToken);
-      } catch {
-        // Ignore logout errors, clear local state anyway
+      } catch (error) {
+        console.error("Logout error:", error);
       }
     }
 

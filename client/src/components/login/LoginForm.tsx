@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Alert, Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import ClientRoutes from "../../utils/appRoutes";
+import { validateLoginForm } from "../../utils/validation";
 
 const textFieldSx: SxProps<Theme> = {
   "& .MuiOutlinedInput-root": {
@@ -27,25 +29,25 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError("Please fill in all fields");
+    const validation = validateLoginForm(email, password);
+    if (!validation.isValid) {
+      toast.error(validation.message);
       return;
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
       await login(email, password);
+      toast.success("Welcome back!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -77,12 +79,6 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
             Sign in to continue your journey
           </Typography>
         </Box>
-
-        {error && (
-          <Alert severity="error" sx={{ borderRadius: "0.75rem" }}>
-            {error}
-          </Alert>
-        )}
 
         <TextField
           label="Email"

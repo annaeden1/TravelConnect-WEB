@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Alert, Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import ClientRoutes from "../../utils/appRoutes";
+import { validateSignUpForm } from "../../utils/validation";
 
 const textFieldSx: SxProps<Theme> = {
   "& .MuiOutlinedInput-root": {
@@ -28,25 +30,25 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
-    if (!email || !username || !password) {
-      setError("Please fill in all fields");
+    const validation = validateSignUpForm(email, username, password);
+    if (!validation.isValid) {
+      toast.error(validation.message);
       return;
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
       await register(email, username, password);
+      toast.success("Account created successfully!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setIsLoading(false);
     }
@@ -78,12 +80,6 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
             Join TravelConnect today
           </Typography>
         </Box>
-
-        {error && (
-          <Alert severity="error" sx={{ borderRadius: "0.75rem" }}>
-            {error}
-          </Alert>
-        )}
 
         <TextField
           label="Email"
