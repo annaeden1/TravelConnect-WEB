@@ -29,7 +29,6 @@ const LoginHeader = () => {
         },
       }}
     >
-      {/* Logo Avatar */}
       <Avatar
         sx={{
           width: "6rem",
@@ -44,7 +43,6 @@ const LoginHeader = () => {
         <FlightIcon sx={{ fontSize: "3rem", color: "#ffffff" }} />
       </Avatar>
 
-      {/* Title and Subtitle */}
       <Stack spacing={1} alignItems="center" sx={{ position: "relative", zIndex: 1 }}>
         <Typography
           variant="h2"
@@ -70,7 +68,6 @@ const LoginHeader = () => {
         </Typography>
       </Stack>
 
-      {/* Decorative elements */}
       <Box
         sx={{
           position: "absolute",
