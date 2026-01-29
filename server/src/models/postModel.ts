@@ -4,6 +4,7 @@ interface IPost {
   _id: mongoose.Types.ObjectId;
   content: string;
   imageUrl?: string;
+  likes?: mongoose.Types.ObjectId[];
   userCreatorID: mongoose.Types.ObjectId;
 }
 
@@ -14,6 +15,10 @@ const postSchema = new mongoose.Schema<IPost>({
   },
   imageUrl: {
     type: String,
+  },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: []
   },
   userCreatorID: {
     type: mongoose.Schema.Types.ObjectId,

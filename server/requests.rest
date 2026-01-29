@@ -53,7 +53,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTZhY
 ### Get all Posts
 GET http://localhost:3000/post
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTZhYjdhMDIzMDU1NDM0OGZhNWQ3YTUiLCJyYW5kb20iOiIwLjI3MDE0OTQ5ODczNDI3OTg1IiwiaWF0IjoxNzY4NjAxNTA0LCJleHAiOjE3Njg2MDUxMDR9.fzbh-6Q-nYd7wu7Ou2dFupjxEViyYg2gcovzm1AKyzs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjQxNTM3NDQzMzM0OTk5MzgiLCJpYXQiOjE3Njk1NDMwOTIsImV4cCI6MTc2OTU0NjY5Mn0.NihUGyK8UsfAf82Js0wbfA1ka-A4hycoR7GgY7zPtyI
 
 ### Get a Post by ID
 GET http://localhost:3000/post/696ab875230554348fa5d7b2
@@ -78,7 +78,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTZhY
 ### Get all Posts by userCreatorID
 GET http://localhost:3000/post?userCreatorID=507f1f77bcf86cd799439011
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTZhYjdhMDIzMDU1NDM0OGZhNWQ3YTUiLCJyYW5kb20iOiIwLjI3MDE0OTQ5ODczNDI3OTg1IiwiaWF0IjoxNzY4NjAxNTA0LCJleHAiOjE3Njg2MDUxMDR9.fzbh-6Q-nYd7wu7Ou2dFupjxEViyYg2gcovzm1AKyzs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjkzNDY0OTM1ODYxMTM3NjUiLCJpYXQiOjE3NjkyMDg2ODQsImV4cCI6MTc2OTIxMjI4NH0.789qTfr2qiR4OCYS0NZ4paMVJdC0cxgrwkMPxE-_-ME
 
 ### Create a new User
 POST http://localhost:3000/user
@@ -156,4 +156,13 @@ Content-Type: application/json
 
 {
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjc4NTE0NTM2NDIyMjU0MTciLCJpYXQiOjE3Njg2MDE5OTksImV4cCI6MTc2ODY4ODM5OX0.CMdEePytD7DGAVjPXoHBIFgtB586Kn2_f8gasytLdCA"
+}
+
+### Toggle Like on a Post
+POST http://localhost:3000/post/handle-like/69590fb18974fd6b3614707c
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTU5MGZlYTg5NzRmZDZiMzYxNDcwODQiLCJyYW5kb20iOiIwLjQyMDQ3MDA1MjEzMTU0Njg3IiwiaWF0IjoxNzY5NTQzOTM4LCJleHAiOjE3Njk1NDc1Mzh9.BoLRi9uZB8ArVUXqaABbHJPltWNWcxUBqmG-cIi5AzA
+
+{
+  "userId": "69590fea8974fd6b36147084"
 }

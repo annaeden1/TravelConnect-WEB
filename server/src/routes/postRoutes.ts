@@ -144,4 +144,45 @@ router.get("/", authenticate, postController.get.bind(postController));
  */
 router.get("/:_id", authenticate, postController.getById.bind(postController));
 
+/**
+ * @swagger
+ * /post/handle-like/{_id}:
+ *   post:
+ *     summary: Toggle like status for a post
+ *     tags: [Posts]
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The post ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: ID of the user toggling the like
+ *     responses:
+ *       200:
+ *         description: Like status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 likesCount:
+ *                   type: integer
+ *                   description: The updated number of likes for the post
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/handle-like/:_id", authenticate, postController.handleLike.bind(postController));
+
 export default router;
