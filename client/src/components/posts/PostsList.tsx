@@ -17,9 +17,6 @@ const PostsList = ({ posts } : { posts: Post[] }) => {
         <Typography variant="h6" color="text.secondary" gutterBottom>
           No posts found
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Try adjusting your search or check back later for new posts.
-        </Typography>
       </Paper>
     );
   }

@@ -6,21 +6,7 @@ export const getAllPosts = async (): Promise<Post[]> => {
     method: "GET",
   });
 
-  const posts: Post[] = await Promise.all(
-    data.map(async (post) => {
-      const userCreator = await getUserDetails(post.userCreatorID);
-
-      return {
-        _id: post._id,
-        content: post.content,
-        userCreatorID: post.userCreatorID,
-        imageUrl: post.imageUrl,
-        userCreator,
-        likesCount: 0,
-        isLiked: false,
-      };
-    })
-  );
+  const posts: Post[] = await convertPostsData(data);
 
   return posts;
 };
@@ -47,3 +33,33 @@ export const handleLike = async (postId: string, userId: string): Promise<{ like
     body: { userId }
   });
 };
+
+export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
+  const userPosts =  await apiClient<Post[]>(`/post?userCreatorID=${userId}`, {
+    method: "GET",
+  });
+
+  const posts: Post[] = await convertPostsData(userPosts);
+
+  return posts;
+};
+
+async function convertPostsData (posts: any): Promise<Post[]> {
+    const convertedPosts: Post[] = await Promise.all(
+    posts.map(async (post: any) => {
+      const userCreator = await getUserDetails(post.userCreatorID);
+
+      return {
+        _id: post._id,
+        content: post.content,
+        userCreatorID: post.userCreatorID,
+        imageUrl: post.imageUrl,
+        userCreator,
+        likesCount: 0,
+        isLiked: false,
+      };
+    })
+  );
+
+  return convertedPosts;
+}
