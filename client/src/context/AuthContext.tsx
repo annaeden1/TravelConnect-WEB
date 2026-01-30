@@ -47,6 +47,15 @@ const getStoredUser = (): User | null => {
   return stored ? JSON.parse(stored) : null;
 };
 
+export const getCurrentUser = (): User | null => {
+  return getStoredUser();
+};
+
+export const getCurrentUserId = (): string | null => {
+  const user = getStoredUser();
+  return user?._id ?? null;
+};
+
 const storeUser = (user: User) => {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 };
