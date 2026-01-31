@@ -29,11 +29,14 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    setAuthError("");
+    
     const validation = validateLoginForm(email, password);
     if (!validation.isValid) {
       toast.error(validation.message);
@@ -47,7 +50,9 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
       toast.success("Welcome back!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Login failed");
+      const errorMessage = err instanceof Error ? err.message : "Login failed";
+      setAuthError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -86,8 +91,13 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
           variant="outlined"
           fullWidth
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setAuthError("");
+          }}
           disabled={isLoading}
+          error={!!authError}
+          helperText={authError}
           sx={textFieldSx}
         />
 

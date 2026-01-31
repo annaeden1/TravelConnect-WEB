@@ -30,11 +30,14 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
+    setEmailError("");
+    
     const validation = validateSignUpForm(email, username, password);
     if (!validation.isValid) {
       toast.error(validation.message);
@@ -48,7 +51,12 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
       toast.success("Account created successfully!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Registration failed");
+      const errorMessage = err instanceof Error ? err.message : "Registration failed";
+      // Check if it's an email-related error
+      if (errorMessage.toLowerCase().includes("email")) {
+        setEmailError(errorMessage);
+      }
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -87,8 +95,13 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
           variant="outlined"
           fullWidth
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailError("");
+          }}
           disabled={isLoading}
+          error={!!emailError}
+          helperText={emailError}
           sx={textFieldSx}
         />
 
