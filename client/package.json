@@ -1,5 +1,5 @@
 {
-  "name": "package.json",
+  "name": "TravelConnect",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
+    "axios": "^1.13.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.12.0",
