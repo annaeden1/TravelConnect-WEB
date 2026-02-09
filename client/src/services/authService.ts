@@ -13,7 +13,11 @@ export type LoginResponse = AuthTokens & {
   _id: string;
 };
 
-export type RegisterResponse = AuthTokens;
+export type RegisterResponse = AuthTokens & {
+  username: string;
+  profileImage: string;
+  _id: string;
+};
 
 export type ApiError = {
   error: string;

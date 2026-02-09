@@ -61,7 +61,13 @@ const generateUserTokens = (userId: string): Tokens => {
         user.refreshTokens = [userTokens.refreshToken];
         await user.save();
 
-        res.status(201).json(userTokens);
+        res.status(201).json({
+            username: user.username,
+            accessToken: userTokens.accessToken,
+            refreshToken: userTokens.refreshToken,
+            profileImage: user.profileImage,
+            _id: user._id,
+        });
     } catch (error) {
         return sendError(res, "Registration failed");
     }

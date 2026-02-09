@@ -29,8 +29,13 @@ type StoredTokens = {
 };
 
 const getStoredTokens = (): StoredTokens | null => {
-  const stored = localStorage.getItem(TOKEN_KEY);
-  return stored ? JSON.parse(stored) : null;
+  try {
+    const stored = localStorage.getItem(TOKEN_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    localStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
 };
 
 const storeTokens = (tokens: StoredTokens) => {
@@ -43,8 +48,13 @@ const clearTokens = () => {
 };
 
 const getStoredUser = (): User | null => {
-  const stored = localStorage.getItem(USER_KEY);
-  return stored ? JSON.parse(stored) : null;
+  try {
+    const stored = localStorage.getItem(USER_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
 };
 
 export const getCurrentUser = (): User | null => {
@@ -100,9 +110,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const response = await authService.register(email, username, password);
 
     const userData: User = {
-      _id: "",
-      username: username,
-      profileImage: "",
+      _id: response._id,
+      username: response.username,
+      profileImage: response.profileImage,
       email: email,
     };
 
