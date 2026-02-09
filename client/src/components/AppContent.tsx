@@ -5,13 +5,19 @@ import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import { Home, AIAssistant, CreatePost, Profile, LoginPage } from "../pages";
 import ClientRoutes from "../utils/appRoutes";
+import { useAuth } from "../context/AuthContext";
 
 const AppContent = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
-        <Route path={ClientRoutes.LOGIN} element={<LoginPage />} />
+        <Route
+          path={ClientRoutes.LOGIN}
+          element={isAuthenticated ? <Navigate to={ClientRoutes.HOME} replace /> : <LoginPage />}
+        />
 
         <Route element={<Layout />}>
           <Route

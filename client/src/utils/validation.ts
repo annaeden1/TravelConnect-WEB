@@ -44,9 +44,8 @@ export const validateLoginForm = (email: string, password: string): ValidationRe
   const emailResult = validateEmail(email);
   if (!emailResult.isValid) return emailResult;
 
-  if (!password) {
-    return { isValid: false, message: 'Password is required' };
-  }
+  const passwordResult = validatePassword(password);
+  if (!passwordResult.isValid) return passwordResult;
 
   return { isValid: true, message: '' };
 };

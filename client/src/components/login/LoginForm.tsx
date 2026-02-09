@@ -29,14 +29,13 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    setAuthError("");
-    
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const validation = validateLoginForm(email, password);
     if (!validation.isValid) {
       toast.error(validation.message);
@@ -51,7 +50,6 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
       navigate(ClientRoutes.HOME);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
-      setAuthError(errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -85,39 +83,36 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
           </Typography>
         </Box>
 
-        <TextField
-          label="Email"
-          type="email"
-          variant="outlined"
-          fullWidth
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setAuthError("");
-          }}
-          disabled={isLoading}
-          error={!!authError}
-          helperText={authError}
-          sx={textFieldSx}
-        />
+        <form onSubmit={handleLogin}>
+          <Stack spacing={3}>
+            <TextField
+              label="Email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+              sx={textFieldSx}
+            />
 
-        <TextField
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-          sx={textFieldSx}
-        />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              sx={textFieldSx}
+            />
 
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleLogin}
-          disabled={isLoading}
-          sx={{
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isLoading}
+              sx={{
             backgroundColor: "#0077b6",
             borderRadius: "0.75rem",
             py: "0.875rem",
@@ -131,8 +126,10 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
             },
           }}
         >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
-        </Button>
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            </Button>
+          </Stack>
+        </form>
 
         <Button
           variant="outlined"

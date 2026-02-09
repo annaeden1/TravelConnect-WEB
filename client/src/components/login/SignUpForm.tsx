@@ -35,9 +35,10 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     setEmailError("");
-    
+
     const validation = validateSignUpForm(email, username, password);
     if (!validation.isValid) {
       toast.error(validation.message);
@@ -52,7 +53,6 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
       navigate(ClientRoutes.HOME);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Registration failed";
-      // Check if it's an email-related error
       if (errorMessage.toLowerCase().includes("email")) {
         setEmailError(errorMessage);
       }
@@ -89,65 +89,69 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
           </Typography>
         </Box>
 
-        <TextField
-          label="Email"
-          type="email"
-          variant="outlined"
-          fullWidth
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setEmailError("");
-          }}
-          disabled={isLoading}
-          error={!!emailError}
-          helperText={emailError}
-          sx={textFieldSx}
-        />
+        <form onSubmit={handleSignUp}>
+          <Stack spacing={3}>
+            <TextField
+              label="Email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError("");
+              }}
+              disabled={isLoading}
+              error={!!emailError}
+              helperText={emailError}
+              sx={textFieldSx}
+            />
 
-        <TextField
-          label="Username"
-          type="text"
-          variant="outlined"
-          fullWidth
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          disabled={isLoading}
-          sx={textFieldSx}
-        />
+            <TextField
+              label="Username"
+              type="text"
+              variant="outlined"
+              fullWidth
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
+              sx={textFieldSx}
+            />
 
-        <TextField
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-          sx={textFieldSx}
-        />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              sx={textFieldSx}
+            />
 
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleSignUp}
-          disabled={isLoading}
-          sx={{
-            backgroundColor: "#0077b6",
-            borderRadius: "0.75rem",
-            py: "0.875rem",
-            fontSize: "1rem",
-            fontWeight: 600,
-            textTransform: "none",
-            boxShadow: "0 0.25rem 1rem rgba(0, 119, 182, 0.3)",
-            "&:hover": {
-              backgroundColor: "#005f8d",
-              boxShadow: "0 0.5rem 1.5rem rgba(0, 119, 182, 0.4)",
-            },
-          }}
-        >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
-        </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isLoading}
+              sx={{
+                backgroundColor: "#0077b6",
+                borderRadius: "0.75rem",
+                py: "0.875rem",
+                fontSize: "1rem",
+                fontWeight: 600,
+                textTransform: "none",
+                boxShadow: "0 0.25rem 1rem rgba(0, 119, 182, 0.3)",
+                "&:hover": {
+                  backgroundColor: "#005f8d",
+                  boxShadow: "0 0.5rem 1.5rem rgba(0, 119, 182, 0.4)",
+                },
+              }}
+            >
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+            </Button>
+          </Stack>
+        </form>
 
         <Button
           variant="outlined"
