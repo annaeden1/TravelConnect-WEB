@@ -1,5 +1,5 @@
 import type { Message } from "../utils/types/chat";
-import apiClient from "./apiClient";
+import api from "./api";
 
 interface ChatResponse {
   response: string;
@@ -13,9 +13,8 @@ const generateId = (): string => {
 export const sendMessageToAI = async (
   userMessage: string
 ): Promise<Message> => {
-  const data = await apiClient<ChatResponse>("/ai/chat", {
-    method: "POST",
-    body: { message: userMessage },
+  const { data } = await api.post<ChatResponse>("/ai/chat", {
+    message: userMessage,
   });
 
   return {
