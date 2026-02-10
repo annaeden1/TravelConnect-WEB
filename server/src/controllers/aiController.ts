@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { ZodError } from "zod";
+import { z } from "zod";
 import { chatRequestSchema, type ChatResponse } from "../schemas/aiSchemas";
 import aiService, { LLMServiceError } from "../services/aiService";
 
@@ -19,7 +19,7 @@ class AIController {
 
       return res.status(200).json(response);
     } catch (error) {
-      if (error instanceof ZodError) {
+      if (error instanceof z.ZodError) {
         const firstError = error.issues[0];
         return res.status(400).json({
           error: firstError.message,
