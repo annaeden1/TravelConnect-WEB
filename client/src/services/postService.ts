@@ -1,10 +1,8 @@
 import type { Post } from "../utils/types/post.interface";
-import apiClient from "./apiClient";
+import api from "./api";
 
 export const getAllPosts = async (): Promise<Post[]> => {
-  const data = await apiClient<Post[]>("/post/", {
-    method: "GET",
-  });
+  const data = (await api.get<Post[]>("/post/")).data;
 
   const posts: Post[] = await convertPostsData(data);
 
@@ -12,35 +10,27 @@ export const getAllPosts = async (): Promise<Post[]> => {
 };
 
 export const getAllComentsOfPost = async (postId: string): Promise<number> => {
-  const data = await apiClient<any[]>(`/comment?relatedPostID=${postId}`, {
-    method: "GET",
-  });
+  const data = (await api.get<any[]>(`/comment?relatedPostID=${postId}`)).data;
 
   return data.length;
 };
 
 export const getUserDetails = async (userId: string): Promise<{ username: string, profileImage: string }> => {
-    const data = await apiClient<{ username: string, profileImage: string }>(`/user/${userId}`, {
-      method: "GET",
-    });
+    const data = (await api.get<{ username: string, profileImage: string }>(`/user/${userId}`)).data;
 
     return data;
 };
 
 export const handleLike = async (postId: string, userId: string): Promise<{ likesCount: number }> => {
-  return await apiClient<{ likesCount: number }>(`/post/handle-like/${postId}`, {
-    method: "POST",
+  return (await api.post<{ likesCount: number }>(`/post/handle-like/${postId}`, {
     body: { userId }
-  });
+  })).data;
 };
 
 export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
-  const userPosts =  await apiClient<Post[]>(`/post?userCreatorID=${userId}`, {
-    method: "GET",
-  });
+  const userPosts =  await api.get<Post[]>(`/post?userCreatorID=${userId}`);
 
-  const posts: Post[] = await convertPostsData(userPosts);
-
+  const posts: Post[] = await convertPostsData(userPosts.data);
   return posts;
 };
 
