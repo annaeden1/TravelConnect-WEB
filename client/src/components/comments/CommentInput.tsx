@@ -1,67 +1,108 @@
-// import { useState } from "react";
-// import type { Comment } from "../../utils/types/comment.interface";
+import { Box, TextField, Button, Avatar, Paper } from "@mui/material";
+import { useState } from "react";
+import { getCurrentUser } from "../../context/AuthContext";
+import { createComment } from "../../services/commentService";
 
-// const CommentInput = () => {
-//     const [isEditing, setIsEditing] = useState(false);
-//     const [editedDescription, setEditedDescription] = useState("");
-//     const [description, setDescription] = useState("");
+interface CommentInputProps {
+  postId: string;
+  onCommentAdded: () => void;
+}
 
-//     const handleEditToggle = () => {
-//         setIsEditing(!isEditing);
-//         setEditedDescription(description); // Reset edited description on cancel
-//     };
-//     const handleSave = () => {
-//         setDescription(editedDescription);
-//         setIsEditing(false);
-//         // Here you would typically also call a service to update the comment on the server
-//     }
+const CommentInput = ({ postId, onCommentAdded }: CommentInputProps) => {
+  const [text, setText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = getCurrentUser();
 
-//     return (    
-//     <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-//         <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-//             <div style={{
-//                 width: '40px',
-//                 height: '40px',
-//                 borderRadius: '50%',
-//                 backgroundColor: '#1976d2',
-//                 color: '#fff',
-//                 display: 'flex',
-//                 alignItems: 'center',
-//                 justifyContent: 'center',
-//                 fontWeight: 'bold',
-//                 fontSize: '18px'
-//             }}>
-//                 {comment.userCreator.profileImage ? (
-//               <img src={comment.userCreator.profileImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-//             ) : (
-//               comment.userCreator.username.charAt(0).toUpperCase()
-//             )}
-//             </div>
-//             <div style={{ fontWeight: 'bold' }}>
-//                 {comment.userCreator.username}
-//             </div>
-//         </div>
-//         {isEditing ? (
-//             <textarea
-//                 style={{ width: '100%', minHeight: '80px' }}
-//                 value={editedDescription}
-//                 onChange={(e) => setEditedDescription(e.target.value)}
-//             />
-//         ) : (
-//             <div>{description}</div>
-//         )}
-//         <div style={{ marginTop: '8px' }}>
-//             {isEditing ? (
-//                 <button onClick={handleSave} style={{ padding: '8px 16px', backgroundColor: '#1976d2', color: '#fff', border: 'none', borderRadius: '4px' }}>
-//                     Save
-//                 </button>
-//             ) : (
-//                 <button onClick={handleEditToggle} style={{ padding: '8px 16px', backgroundColor: '#fff', color: '#1976d2', border: '1px solid #1976d2', borderRadius: '4px' }}>
-//                     Edit
-//                 </button>
-//             )}
-//         </div>
-//     </div>
-//     );
-// }
-// export default CommentInput;
+  const handlePostComment = async () => {
+    if (!text.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await createComment({
+        userCreatorID: user?._id || "",
+        relatedPostID: postId,
+        description: text,
+      });
+
+      setText("");
+      onCommentAdded();
+    } catch (err) {
+      console.error("Failed to post comment:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        bgcolor: "background.paper",
+        borderTop: "0.0625rem solid",
+        borderColor: "divider",
+        p: "1rem",
+        boxSizing: "border-box",
+        mt: "auto",
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          p: "0.5rem",
+          borderRadius: "1rem",
+          bgcolor: "action.hover",
+          boxSizing: "border-box",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "1rem",
+            alignItems: "center",
+          }}
+        >
+          <Avatar
+            sx={{ width: "2rem", height: "2rem", bgcolor: "primary.main" }}
+          >
+            {user?.username?.charAt(0).toUpperCase()}
+          </Avatar>
+
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <TextField
+              fullWidth
+              multiline
+              maxRows={4}
+              placeholder="Add a comment..."
+              variant="standard"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              InputProps={{
+                disableUnderline: true,
+                sx: { fontSize: "0.9rem" },
+              }}
+            />
+          </Box>
+
+          <Button
+            variant="contained"
+            size="small"
+            disabled={!text.trim() || isSubmitting}
+            onClick={handlePostComment}
+            sx={{
+              borderRadius: "1rem",
+              px: "1.25rem",
+              textTransform: "none",
+              fontWeight: "bold",
+              minWidth: "fit-content",
+            }}
+          >
+            {isSubmitting ? "..." : "Post"}
+          </Button>
+        </Box>
+      </Paper>
+    </Box>
+  );
+};
+
+export default CommentInput;

@@ -6,10 +6,10 @@ import {
   deleteComment,
   getAllCommentsOfPost,
 } from "../services/commentService";
-// import CommentInput from "../components/comments/CommentInput";
 import Box from "@mui/material/Box";
 import { ArrowBack } from "@mui/icons-material";
 import axios from "axios";
+import CommentInput from "../components/comments/CommentInput";
 
 const CommentsPage = () => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -56,10 +56,16 @@ const CommentsPage = () => {
     <Box>
       <ArrowBack onClick={handleBack} />
       <CommentsList comments={comments} onDelete={handleDelete} />
+      <Box sx={{ 
+        position: 'sticky', 
+        bottom: '0rem', 
+        left: '0rem', 
+        right: '0rem' 
+      }}>
+      <CommentInput key={postId} postId={postId ?? ""} onCommentAdded={fetchComments} />
+      </Box>
     </Box>
   );
 };
-{
-  /* <CommentInput /> */
-}
+
 export default CommentsPage;

@@ -15,9 +15,7 @@ export const createComment = async (commentData: {
   relatedPostID: string;
   userCreatorID: string;
 }): Promise<Comment> => {
-  const data = (await api.post<Comment>("/comment/", {
-    body: commentData,
-  })).data;
+  const data = (await api.post<Comment>("/comment/", commentData)).data;
 
   return data;
 };
