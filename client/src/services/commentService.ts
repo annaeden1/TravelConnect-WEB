@@ -34,9 +34,7 @@ export const updateComment = async (
     description?: string;
   },
 ): Promise<Comment> => {
-  const data = (await api.put<Comment>(`/comment/${commentId}`, {
-    body: updatedData,
-  })).data;
+  const data = (await api.put<Comment>(`/comment/${commentId}`, updatedData)).data;
 
   return data;
 };
