@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import ClientRoutes from "../../utils/appRoutes";
 import { validateLoginForm } from "../../utils/validation";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 
 const textFieldSx: SxProps<Theme> = {
   "& .MuiOutlinedInput-root": {
@@ -30,7 +30,7 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -56,8 +56,19 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    console.log("Google Sign In clicked");
+  const onGoogleSignInSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+      await googleLogin(credentialResponse);
+      toast.success("Welcome back!");
+      navigate(ClientRoutes.HOME);
+    } catch (error) {
+      console.error("Google Sign In error:", error);
+      toast.error("Google Sign In failed");
+    }
+  };
+
+  const onGoogleSignInError = () => {
+    toast.error("Google Sign In failed");
   };
 
   return (
@@ -160,30 +171,7 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
             or
           </Typography>
         </Divider>
-
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={handleGoogleSignIn}
-          disabled={isLoading}
-          startIcon={<GoogleIcon />}
-          sx={{
-            borderColor: "#dadce0",
-            color: "#3c4043",
-            borderRadius: "0.75rem",
-            py: "0.875rem",
-            fontSize: "1rem",
-            fontWeight: 500,
-            textTransform: "none",
-            backgroundColor: "#ffffff",
-            "&:hover": {
-              borderColor: "#d2e3fc",
-              backgroundColor: "#f8faff",
-            },
-          }}
-        >
-          Sign in with Google
-        </Button>
+        <GoogleLogin onSuccess={onGoogleSignInSuccess} onError={onGoogleSignInError} />
       </Stack>
     </Box>
   );
