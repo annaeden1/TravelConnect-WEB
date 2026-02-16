@@ -10,11 +10,11 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     if (!token) {
         return res.status(401).json({ message: "Unauthorized - no token" });
     }
-    const secret = process.env.JWT_SECRET || "default_secret";
+    const secret = process.env.JWT_SECRET || "secretkey";
     try {
         const decoded = jwt.verify(token, secret) as { _id: string };
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Unauthorized - invalid token" });
+        return res.status(401).json({ message: "Unauthorized - invalid token", error: err instanceof Error ? err.message : String(err) });
     }
 };

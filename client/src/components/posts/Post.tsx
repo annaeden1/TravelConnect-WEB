@@ -15,12 +15,19 @@ import { useEffect, useState } from "react";
 import { getAllComentsOfPost } from "../../services/postService";
 import { handleLike } from "../../services/postService";
 import { type Post } from "../../utils/types/post.interface";
+import { useNavigate } from "react-router-dom";
 
 const PostComponent = ({ post }: { post: Post }) => {
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const [isLoading, setIsLoading] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
+
+  const navigate = useNavigate();
+  
+  const handleCommentClick = () => {
+    navigate(`/comments/${post._id}`);
+  };
 
   useEffect(() => {
       const fetchCommentsCount = async () => {
@@ -125,6 +132,7 @@ const PostComponent = ({ post }: { post: Post }) => {
             </Typography>
 
             <IconButton
+              onClick={handleCommentClick}
               sx={{
                 color: 'text.secondary',
                 '&:hover': {
