@@ -16,6 +16,7 @@ import { getAllComentsOfPost } from "../../services/postService";
 import { handleLike } from "../../services/postService";
 import { type Post } from "../../utils/types/post.interface";
 import { useNavigate } from "react-router-dom";
+import { getCurrentUserId } from "../../context/AuthContext";
 
 const PostComponent = ({ post }: { post: Post }) => {
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
@@ -46,7 +47,11 @@ const PostComponent = ({ post }: { post: Post }) => {
 
     setIsLoading(true);
     try {
-      const result = await handleLike(post._id, post.userCreatorID); // Replace with actual user ID
+      const userId = getCurrentUserId();
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      const result = await handleLike(post._id, userId);
       setLikesCount(result.likesCount);
       setIsLiked(!isLiked);
     } catch (error) {

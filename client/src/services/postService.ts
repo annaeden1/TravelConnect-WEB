@@ -1,5 +1,7 @@
+import { getCurrentUserId } from "../context/AuthContext";
 import type { Post } from "../utils/types/post.interface";
 import api from "./api";
+import { getUserDetails } from "./userService";
 
 export const getAllPosts = async (): Promise<Post[]> => {
   const data = (await api.get<Post[]>("/post/")).data;
@@ -15,16 +17,8 @@ export const getAllComentsOfPost = async (postId: string): Promise<number> => {
   return data.length;
 };
 
-export const getUserDetails = async (userId: string): Promise<{ username: string, profileImage: string }> => {
-    const data = (await api.get<{ username: string, profileImage: string }>(`/user/${userId}`)).data;
-
-    return data;
-};
-
 export const handleLike = async (postId: string, userId: string): Promise<{ likesCount: number }> => {
-  return (await api.post<{ likesCount: number }>(`/post/handle-like/${postId}`, {
-    body: { userId }
-  })).data;
+  return (await api.post<{ likesCount: number }>(`/post/handle-like/${postId}`, {userId})).data;
 };
 
 export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
@@ -38,6 +32,7 @@ async function convertPostsData (posts: any): Promise<Post[]> {
     const convertedPosts: Post[] = await Promise.all(
     posts.map(async (post: any) => {
       const userCreator = await getUserDetails(post.userCreatorID);
+      const isLiked = post.likes.includes(getCurrentUserId());
 
       return {
         _id: post._id,
@@ -45,8 +40,8 @@ async function convertPostsData (posts: any): Promise<Post[]> {
         userCreatorID: post.userCreatorID,
         imageUrl: post.imageUrl,
         userCreator,
-        likesCount: 0,
-        isLiked: false,
+        likesCount: post.likes.length || 0,
+        isLiked: isLiked || false,
       };
     })
   );
