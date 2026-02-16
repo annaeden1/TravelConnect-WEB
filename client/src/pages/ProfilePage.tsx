@@ -1,8 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import PostsList from "../components/posts/PostsList";
 import { useEffect, useState } from "react";
 import type { Post } from "../utils/types/post.interface";
 import { getPostsByUserId } from "../services/postService";
+import { getCurrentUserId } from "../context/AuthContext";
 
 const Profile = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -12,7 +13,11 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
-        const fetchedPosts = await getPostsByUserId("69590fea8974fd6b36147084"); // Replace with actual user ID
+        const userId = getCurrentUserId();
+        if (!userId) {
+          throw new Error("User not authenticated");
+        }
+        const fetchedPosts = await getPostsByUserId(userId);
         setPosts(fetchedPosts);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch posts");
@@ -25,16 +30,50 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
         <Typography variant="h6">Loading posts...</Typography>
       </Box>
     );
   }
 
-  if (error) { 
+    if (posts.length === 0) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <Typography variant="h6" color="error">{error}</Typography>
+      <Paper
+        elevation={1}
+        sx={{
+          p: 4,
+          textAlign: "center",
+          borderRadius: 2,
+          backgroundColor: "background.paper",
+        }}
+      >
+        <Typography variant="h6" color="text.secondary" gutterBottom>
+          No posts found
+        </Typography>
+      </Paper>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }
@@ -42,7 +81,7 @@ const Profile = () => {
   return (
     <div>
       <h2>My Posts</h2>
-        <PostsList posts={posts} />
+      <PostsList posts={posts} />
     </div>
   );
 };
