@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
@@ -56,7 +64,9 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
     }
   };
 
-  const onGoogleSignInSuccess = async (credentialResponse: CredentialResponse) => {
+  const onGoogleSignInSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
     try {
       await googleLogin(credentialResponse);
       toast.success("Welcome back!");
@@ -86,7 +96,10 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
     >
       <Stack spacing={3} sx={{ width: "100%", maxWidth: "22rem" }}>
         <Box sx={{ mb: "1rem" }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}
+          >
             Welcome Back
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary" }}>
@@ -124,20 +137,24 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
               fullWidth
               disabled={isLoading}
               sx={{
-            backgroundColor: "#0077b6",
-            borderRadius: "0.75rem",
-            py: "0.875rem",
-            fontSize: "1rem",
-            fontWeight: 600,
-            textTransform: "none",
-            boxShadow: "0 0.25rem 1rem rgba(0, 119, 182, 0.3)",
-            "&:hover": {
-              backgroundColor: "#005f8d",
-              boxShadow: "0 0.5rem 1.5rem rgba(0, 119, 182, 0.4)",
-            },
-          }}
-        >
-              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+                backgroundColor: "#0077b6",
+                borderRadius: "0.75rem",
+                py: "0.875rem",
+                fontSize: "1rem",
+                fontWeight: 600,
+                textTransform: "none",
+                boxShadow: "0 0.25rem 1rem rgba(0, 119, 182, 0.3)",
+                "&:hover": {
+                  backgroundColor: "#005f8d",
+                  boxShadow: "0 0.5rem 1.5rem rgba(0, 119, 182, 0.4)",
+                },
+              }}
+            >
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Login"
+              )}
             </Button>
           </Stack>
         </form>
@@ -167,11 +184,30 @@ const LoginForm = ({ onSwitchToSignUp }: LoginFormProps) => {
         </Button>
 
         <Divider sx={{ my: "0.5rem" }}>
-          <Typography variant="body2" sx={{ color: "text.secondary", px: "1rem" }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", px: "1rem" }}
+          >
             or
           </Typography>
         </Divider>
-        <GoogleLogin onSuccess={onGoogleSignInSuccess} onError={onGoogleSignInError} />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <GoogleLogin
+            onSuccess={onGoogleSignInSuccess}
+            onError={onGoogleSignInError}
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            width="352px"
+            text="signup_with"
+          />
+        </Box>
       </Stack>
     </Box>
   );

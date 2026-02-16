@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
@@ -52,7 +60,8 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
       toast.success("Account created successfully!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Registration failed";
+      const errorMessage =
+        err instanceof Error ? err.message : "Registration failed";
       if (errorMessage.toLowerCase().includes("email")) {
         setEmailError(errorMessage);
       }
@@ -62,7 +71,9 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
     }
   };
 
-  const onGoogleSignInSuccess = async (credentialResponse: CredentialResponse) => {
+  const onGoogleSignInSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
     try {
       await googleLogin(credentialResponse);
       toast.success("Welcome!");
@@ -81,7 +92,6 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
     <Box
       sx={{
         width: "50%",
-        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -92,7 +102,10 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
     >
       <Stack spacing={3} sx={{ width: "100%", maxWidth: "22rem" }}>
         <Box sx={{ mb: "1rem" }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}
+          >
             Create Account
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary" }}>
@@ -159,7 +172,11 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
                 },
               }}
             >
-              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Sign Up"
+              )}
             </Button>
           </Stack>
         </form>
@@ -189,11 +206,30 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
         </Button>
 
         <Divider sx={{ my: "0.5rem" }}>
-          <Typography variant="body2" sx={{ color: "text.secondary", px: "1rem" }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", px: "1rem" }}
+          >
             or
           </Typography>
         </Divider>
-        <GoogleLogin onSuccess={onGoogleSignInSuccess} onError={onGoogleSignInError} />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <GoogleLogin
+            onSuccess={onGoogleSignInSuccess}
+            onError={onGoogleSignInError}
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            width="352px"
+            text="signup_with"
+          />
+        </Box>
       </Stack>
     </Box>
   );
