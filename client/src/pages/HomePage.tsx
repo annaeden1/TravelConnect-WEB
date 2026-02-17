@@ -1,36 +1,67 @@
 import { useState, useEffect } from "react";
 import PostsList from "../components/posts/PostsList";
-import { getAllPosts } from "../services/postService";
+import { getAllPosts, searchPosts } from "../services/postService";
 import type { Post } from "../utils/types/post.interface";
 import {
   Box,
   TextField,
   InputAdornment,
   Paper,
-  Typography
+  Typography,
+  CircularProgress
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const fetchedPosts = await getAllPosts();
-        setPosts(fetchedPosts);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch posts");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchAllPosts = async () => {
+    try {
+      const fetchedPosts = await getAllPosts();
+      setPosts(fetchedPosts);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch posts");
+    }
+  };
 
-    fetchPosts();
+  useEffect(() => {
+    fetchAllPosts().finally(() => setLoading(false));
   }, []);
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      await fetchAllPosts();
+      return;
+    }
+
+    setSearching(true);
+    try {
+      const results = await searchPosts(searchTerm.trim());
+      setPosts(results);
+    } catch (err) {
+      console.error("Search failed:", err);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (!value.trim()) {
+      fetchAllPosts();
+    }
+  };
 
   if (loading) {
     return (
@@ -40,7 +71,7 @@ const Home = () => {
     );
   }
 
-  if (error) { 
+  if (error) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
         <Typography variant="h6" color="error">{error}</Typography>
@@ -50,7 +81,6 @@ const Home = () => {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
-      {/* Search Bar UI (functionality to be implemented in backend) */}
       <Paper
         elevation={1}
         sx={{
@@ -63,15 +93,21 @@ const Home = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search posts by content or username..."
+          placeholder="Search posts... (press Enter)"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <SearchIcon color="action" />
               </InputAdornment>
             ),
+            endAdornment: searching ? (
+              <InputAdornment position="end">
+                <CircularProgress size={20} />
+              </InputAdornment>
+            ) : null,
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
@@ -85,17 +121,6 @@ const Home = () => {
             },
           }}
         />
-
-        {/* Search Results Info (will show actual results when backend search is implemented) */}
-        {searchTerm && (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mt: 1, textAlign: 'center' }}
-          >
-            Search functionality will be implemented in backend
-          </Typography>
-        )}
       </Paper>
 
       {/* Posts List */}
