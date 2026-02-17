@@ -8,12 +8,7 @@ export interface TripPostData {
   photos: File[];
 }
 
-export const createTripPost = async (data: FormData): Promise<any> => {
-  const response = await api.post("/post", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
+export const createTripPost = async (data: TripPostData & { userCreatorID: string }): Promise<any> => {
+  const response = await api.post("/post", data);
   return response.data;
 };
