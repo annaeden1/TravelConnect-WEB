@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import authService, { type LoginResponse } from "../services/authService";
+import type { CredentialResponse } from "@react-oauth/google";
 
 type User = {
   _id: string;
@@ -16,6 +17,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  googleLogin: (credentialResponse: CredentialResponse) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -134,6 +136,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  const googleLogin = async (credentialResponse: CredentialResponse) => {
+    try {
+      const response: LoginResponse = await authService.googleSignInSuccess(credentialResponse);
+      
+      const userData: User = {
+        _id: response._id,
+        username: response.username,
+        profileImage: response.profileImage,
+        email: response.email,
+      };
+      
+      setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
+    } catch (error) {
+      console.error("Google Login error:", error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -144,6 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
+        googleLogin
       }}
     >
       {children}
