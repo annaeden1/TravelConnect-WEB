@@ -1,3 +1,4 @@
+import type { CredentialResponse } from '@react-oauth/google';
 import axios, { AxiosError } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
@@ -11,6 +12,7 @@ export type LoginResponse = AuthTokens & {
   username: string;
   profileImage: string;
   _id: string;
+  email: string;
 };
 
 export type RegisterResponse = AuthTokens & {
@@ -81,6 +83,15 @@ const authService = {
       throw new Error(getErrorMessage(error, 'Token refresh failed'));
     }
   },
+
+  async googleSignInSuccess(credentialResponse: CredentialResponse) {
+    try {
+      const { data } = await authApi.post<LoginResponse>('/auth/googleLogin', credentialResponse);
+      return data;
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Google login failed'));
+    }
+  }
 };
 
 export default authService;

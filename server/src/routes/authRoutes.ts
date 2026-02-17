@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, logout, refreshToken } from "../controllers/authController";
+import { register, login, logout, refreshToken, googleLogin } from "../controllers/authController";
 
 const router = express.Router();
 
@@ -61,6 +61,7 @@ router.post("/register", register);
  *         description: Internal server error
  */
 router.post("/login", login);
+router.post("/googleLogin", googleLogin);
 
 /**
  * @swagger

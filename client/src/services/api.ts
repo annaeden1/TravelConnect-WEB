@@ -12,7 +12,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('travelconnect_tokens') ? JSON.parse(localStorage.getItem('travelconnect_tokens')!).accessToken : null;
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -29,7 +29,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem('travelconnect_tokens') ? JSON.parse(localStorage.getItem('travelconnect_tokens')!).refreshToken : null;
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
@@ -40,17 +40,15 @@ api.interceptors.response.use(
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem('travelconnect_tokens', JSON.stringify({ accessToken, refreshToken: newRefreshToken }));
 
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         }
         return api(originalRequest);
       } catch (refreshError) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        localStorage.removeItem('travelconnect_tokens');
+        localStorage.removeItem('travelconnect_user');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
