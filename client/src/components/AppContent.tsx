@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { Home, AIAssistant, CreatePost, Profile, LoginPage } from "../pages";
 import ClientRoutes from "../utils/appRoutes";
 import { useAuth } from "../context/AuthContext";
+import CommentsPage from "../pages/CommentsPage";
 
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
@@ -25,6 +26,14 @@ const AppContent = () => {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ClientRoutes.COMMENTS}
+            element={
+              <ProtectedRoute>
+                <CommentsPage />
               </ProtectedRoute>
             }
           />
