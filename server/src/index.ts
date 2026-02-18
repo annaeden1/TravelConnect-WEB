@@ -9,6 +9,8 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import aiRoutes from "./routes/aiRoutes";
 import { specs, swaggerUi } from "./swagger";
+import { filesRouter } from "./routes/fileRouter";
+import path from "node:path";
 
 const app = express();
 
@@ -25,7 +27,7 @@ const intApp = () => {
         explorer: true,
         customCss: ".swagger-ui .topbar { display: none }",
         customSiteTitle: "Assignment 2 Server API Documentation",
-      })
+      }),
     );
 
     app.get("/api-docs.json", (req, res) => {
@@ -38,7 +40,14 @@ const intApp = () => {
     app.use("/user", userRoutes);
     app.use("/auth", authRoutes);
     app.use("/ai", aiRoutes);
-
+    app.use("/file", filesRouter);
+    app.use((req, res, next) => {
+      console.log(
+        `DEBUG: Incoming Request -> Method: ${req.method} | URL: ${req.url}`,
+      );
+      next();
+    });
+    app.use(express.static(path.join(__dirname, "../public")));
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
       console.error("MONGODB_URI is not defined in the environment variables.");
