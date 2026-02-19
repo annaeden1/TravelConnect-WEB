@@ -4,7 +4,7 @@ import uploadFile from "../controllers/fileController";
 import { mkdirSync } from "node:fs";
 import { authenticate } from "../middlewares/authMiddleware";
 
-const FILES_PATH = "public/";
+export const FILES_PATH = "public/";
 const router = express.Router();
 
 const storage = multer.diskStorage({

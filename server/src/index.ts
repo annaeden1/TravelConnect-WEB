@@ -47,7 +47,8 @@ const intApp = () => {
       );
       next();
     });
-    app.use(express.static(path.join(__dirname, "../public")));
+    app.use("/public", express.static("public"));
+
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
       console.error("MONGODB_URI is not defined in the environment variables.");
