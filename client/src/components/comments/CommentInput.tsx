@@ -63,9 +63,10 @@ const CommentInput = ({ postId, onCommentAdded }: CommentInputProps) => {
           }}
         >
           <Avatar
+            src={user?.profileImage || undefined}
             sx={{ width: "2rem", height: "2rem", bgcolor: "primary.main" }}
           >
-            {user?.profileImage ? user?.profileImage : user?.username?.charAt(0).toUpperCase()}
+            {user?.username?.charAt(0).toUpperCase()}
           </Avatar>
 
           <Box sx={{ flexGrow: 1, minWidth: 0 }}>
