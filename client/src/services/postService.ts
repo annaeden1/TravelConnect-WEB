@@ -76,6 +76,9 @@ async function convertPostsData (posts: any): Promise<Post[]> {
 
       return {
         _id: post._id,
+        destination: post.destination,
+        startDate: post.startDate,
+        endDate: post.endDate,
         content: post.content,
         userCreatorID: post.userCreatorID,
         imageUrl: post.photos && post.photos.length > 0 ? post.photos[0] : undefined,

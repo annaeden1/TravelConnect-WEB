@@ -1,5 +1,8 @@
 export interface Post {
   _id: string;
+  destination: string;
+  startDate: string;
+  endDate: string;
   content: string;
   imageUrl?: string;
   userCreatorID: string;

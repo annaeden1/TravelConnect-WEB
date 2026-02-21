@@ -23,9 +23,9 @@ interface EditPostModalProps {
 
 const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProps) => {
   const [formData, setFormData] = useState<TripFormData>({
-    destination: post.content.split('\n')[0] || '', // Using a simplified extraction, ideally this should be part of the Post interface. We'll reuse the TripForm but content is the only sure thing on Post right now.
-    startDate: '', // We don't have this on the Post interface right now. Will just leave empty or extract from content for now.
-    endDate: '', // We don't have this on the Post interface right now.
+    destination: post.destination || '', 
+    startDate: post.startDate ? post.startDate.split('T')[0] : '', 
+    endDate: post.endDate ? post.endDate.split('T')[0] : '', 
     content: post.content,
   });
   const [loading, setLoading] = useState(false);
@@ -57,8 +57,8 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
       
       onPostUpdated({
         ...post,
-        content: formData.content
-      });
+        ...updatedPostData,
+      } as Post);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update post');

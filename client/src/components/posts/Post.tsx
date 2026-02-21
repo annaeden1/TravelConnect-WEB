@@ -199,7 +199,17 @@ const PostComponent = ({ post, onDelete, onUpdate }: PostComponentProps) => {
 
         {/* Post Content */}
         <CardContent sx={{ pb: 1 }}>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+          {post.destination && (
+            <Typography variant="subtitle1" fontWeight="bold" color="text.primary" gutterBottom>
+              📍 {post.destination}
+            </Typography>
+          )}
+          {(post.startDate || post.endDate) && (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              🗓️ {post.startDate ? new Date(post.startDate).toLocaleDateString() : 'N/A'} - {post.endDate ? new Date(post.endDate).toLocaleDateString() : 'N/A'}
+            </Typography>
+          )}
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 1, mt: 1, whiteSpace: 'pre-wrap' }}>
             {post.content}
           </Typography>
         </CardContent>
