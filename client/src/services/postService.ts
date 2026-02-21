@@ -88,3 +88,12 @@ async function convertPostsData (posts: any): Promise<Post[]> {
 
   return convertedPosts;
 }
+
+export const deletePost = async (postId: string): Promise<void> => {
+  await api.delete(`/post/${postId}`);
+};
+
+export const updatePost = async (postId: string, data: Partial<TripPostData>): Promise<Post> => {
+  const response = await api.put(`/post/${postId}`, data);
+  return response.data;
+};

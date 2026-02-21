@@ -49,6 +49,16 @@ const Home = () => {
     }
   };
 
+  const handlePostDeleted = (deletedPostId: string) => {
+    setPosts(prevPosts => prevPosts.filter(post => post._id !== deletedPostId));
+  };
+
+  const handlePostUpdated = (updatedPost: Post) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => post._id === updatedPost._id ? updatedPost : post)
+    );
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -124,7 +134,11 @@ const Home = () => {
       </Paper>
 
       {/* Posts List */}
-      <PostsList posts={posts} />
+      <PostsList 
+        posts={posts} 
+        onDelete={handlePostDeleted}
+        onUpdate={handlePostUpdated}
+      />
     </Box>
   );
 };

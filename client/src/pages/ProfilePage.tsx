@@ -58,6 +58,7 @@ const Profile = () => {
         console.error(
           err instanceof Error ? err.message : "Failed to fetch posts",
         );
+        setError(err instanceof Error ? err.message : "Failed to fetch posts");
       } finally {
         setLoading(false);
       }
@@ -122,6 +123,16 @@ const Profile = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handlePostDeleted = (deletedPostId: string) => {
+    setPosts(prevPosts => prevPosts.filter(post => post._id !== deletedPostId));
+  };
+
+  const handlePostUpdated = (updatedPost: Post) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => post._id === updatedPost._id ? updatedPost : post)
+    );
   };
 
   if (loading) {
@@ -283,7 +294,11 @@ const Profile = () => {
           </Typography>
         </Paper>
       ) : (
-        <PostsList posts={posts} />
+        <PostsList 
+          posts={posts} 
+          onDelete={handlePostDeleted}
+          onUpdate={handlePostUpdated}
+        />
       )}
     </Box>
   );
