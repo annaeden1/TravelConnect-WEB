@@ -2,9 +2,10 @@ import { Types } from "mongoose";
 import { postModel, type IPost } from "../models/postModel";
 import genericController from "./genericController";
 import type { Request, Response } from "express";
-import { getFileUrl } from "../config/filePaths";
+import { getFileUrl } from "./fileController";
 import llmService from "../services/llmService";
 import searchService from "../services/searchService";
+import { commentModel } from "../models/commentModel";
 
 class postController extends genericController<IPost> {
   constructor() {
@@ -33,6 +34,75 @@ class postController extends genericController<IPost> {
 
       const response = await this.model.create(obj);
       res.status(201).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    try {
+      const id = req.params._id;
+      const obj = { ...req.body };
+      const files = req.files as Express.Multer.File[];
+
+      let existingPhotos: string[] = [];
+      if (req.body.existingPhotos) {
+        if (Array.isArray(req.body.existingPhotos)) {
+          existingPhotos = req.body.existingPhotos;
+        } else {
+          existingPhotos = [req.body.existingPhotos];
+        }
+      }
+
+      const newPhotos: string[] = [];
+      if (files && files.length > 0) {
+        files.forEach((file) => {
+          newPhotos.push(getFileUrl(req, file.filename));
+        });
+      }
+
+      const combinedPhotos = [...existingPhotos, ...newPhotos];
+      obj.photos = combinedPhotos;
+
+      if (combinedPhotos.length > 0) {
+        // Update the primary imageUrl for backwards compatibility
+        obj.imageUrl = combinedPhotos[0];
+      }
+
+      const updated = await this.model.findByIdAndUpdate(id, obj, {
+        new: true,
+      });
+
+      if (!updated) {
+        return res.status(404).json({ error: `Post with id ${id} not found` });
+      }
+
+      res.status(200).json(updated);
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    const id = req.params._id;
+    try {
+      // First, delete the post
+      const response = await this.model.findByIdAndDelete(id);
+
+      if (!response) {
+        return res.status(404).json({ error: `Post with id ${id} not found` });
+      }
+
+      // Then delete all comments related to this post
+      await commentModel.deleteMany({ relatedPostID: id });
+
+      res.status(200).json(response);
     } catch (error) {
       res.status(500).json({
         error:

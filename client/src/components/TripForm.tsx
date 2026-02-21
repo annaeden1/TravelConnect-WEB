@@ -34,7 +34,7 @@ const TripForm = ({ data, onChange, errors = {} }: TripFormProps) => {
           name="destination"
           label="Destination"
           variant="outlined"
-          value={data.destination}
+          value={data.destination || ''}
           onChange={handleChange}
           error={!!errors.destination}
           helperText={errors.destination}
@@ -51,7 +51,7 @@ const TripForm = ({ data, onChange, errors = {} }: TripFormProps) => {
             label="Start Date"
             type="date"
             variant="outlined"
-            value={data.startDate}
+            value={data.startDate || ''}
             onChange={handleChange}
             error={!!errors.startDate}
             helperText={errors.startDate}
@@ -73,7 +73,7 @@ const TripForm = ({ data, onChange, errors = {} }: TripFormProps) => {
             label="End Date"
             type="date"
             variant="outlined"
-            value={data.endDate}
+            value={data.endDate || ''}
             onChange={handleChange}
             error={!!errors.endDate}
             helperText={errors.endDate}
@@ -98,7 +98,7 @@ const TripForm = ({ data, onChange, errors = {} }: TripFormProps) => {
           variant="outlined"
           multiline
           rows={3}
-          value={data.content}
+          value={data.content || ''}
           onChange={handleChange}
           error={!!errors.content}
           helperText={errors.content}

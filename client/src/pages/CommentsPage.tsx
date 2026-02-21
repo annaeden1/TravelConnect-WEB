@@ -13,7 +13,6 @@ import CommentInput from "../components/comments/CommentInput";
 
 const CommentsPage = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const { postId } = useParams<{ postId: string }>();
 
@@ -31,8 +30,6 @@ const CommentsPage = () => {
       }
     }
     console.error(err instanceof Error ? err.message : "Failed to fetch comments");
-    } finally {
-      setLoading(false);
     }
   };
 

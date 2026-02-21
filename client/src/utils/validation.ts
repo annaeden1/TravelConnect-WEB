@@ -85,3 +85,61 @@ export const validateComments = (
 
   return { isValid: true, message: "" };
 };
+
+export interface TripFormValidationResult {
+  isValid: boolean;
+  errors: Record<string, string>;
+  message: string;
+}
+
+export const validateTripForm = (
+  formData: {
+    destination?: string;
+    startDate?: string;
+    endDate?: string;
+    content: string;
+  },
+  totalImageCount: number
+): TripFormValidationResult => {
+  const errors: Record<string, string> = {};
+  let isValid = true;
+  let message = "";
+
+  if (!formData.destination?.trim()) {
+    errors.destination = "Destination is required";
+    isValid = false;
+  }
+
+  if (!formData.startDate) {
+    errors.startDate = "Start date is required";
+    isValid = false;
+  }
+
+  if (!formData.endDate) {
+    errors.endDate = "End date is required";
+    isValid = false;
+  }
+
+  if (
+    formData.startDate &&
+    formData.endDate &&
+    new Date(formData.endDate) < new Date(formData.startDate)
+  ) {
+    errors.endDate = "End date must be after start date";
+    isValid = false;
+  }
+
+  if (!formData.content?.trim()) {
+    errors.content = "Content is required";
+    isValid = false;
+  }
+
+  if (totalImageCount > 5) {
+    message = "You cannot upload more than 5 images";
+    isValid = false;
+  } else if (!isValid && Object.keys(errors).length > 0) {
+    message = "Please fix the form errors";
+  }
+
+  return { isValid, errors, message };
+};

@@ -6,23 +6,85 @@ import {
   Typography,
   Avatar,
   IconButton,
-  Stack
+  Stack,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { useEffect, useState } from "react";
-import { getAllComentsOfPost } from "../../services/postService";
+import { getAllComentsOfPost, deletePost } from "../../services/postService";
 import { handleLike } from "../../services/postService";
 import { type Post } from "../../utils/types/post.interface";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUserId } from "../../context/AuthContext";
+import EditPostModal from "./EditPostModal";
 
-const PostComponent = ({ post }: { post: Post }) => {
+interface PostComponentProps {
+  post: Post;
+  onDelete?: (postId: string) => void;
+  onUpdate?: (updatedPost: Post) => void;
+}
+
+const PostComponent = ({ post, onDelete, onUpdate }: PostComponentProps) => {
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const [isLoading, setIsLoading] = useState(false);
   const [commentsCount, setCommentsCount] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const isCreator = getCurrentUserId() === post.userCreatorID;
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDeleteClick = () => {
+    handleMenuClose();
+    setDeleteDialogOpen(true);
+  };
+
+  const handleEditClick = () => {
+    handleMenuClose();
+    setEditModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deletePost(post._id);
+      if (onDelete) {
+        onDelete(post._id);
+      }
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+    }
+  };
 
   const navigate = useNavigate();
   
@@ -61,6 +123,21 @@ const PostComponent = ({ post }: { post: Post }) => {
     }
   };
 
+  const hasMultipleImages = post.photos && post.photos.length > 1;
+  const currentImageUrl = post.photos && post.photos.length > 0 ? post.photos[currentImageIndex] : post.imageUrl;
+
+  const handleNextImage = () => {
+    if (post.photos) {
+      setCurrentImageIndex((prev) => (prev === post.photos!.length - 1 ? 0 : prev + 1));
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (post.photos) {
+      setCurrentImageIndex((prev) => (prev === 0 ? post.photos!.length - 1 : prev - 1));
+    }
+  };
+
   return (
     <Box sx={{
       display: 'flex',
@@ -78,38 +155,139 @@ const PostComponent = ({ post }: { post: Post }) => {
         }
       }}>
         {/* Post Header */}
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Avatar sx={{ bgcolor: 'primary.main' }}>
-            {post.userCreator.profileImage ? (
-              <img src={post.userCreator.profileImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              post.userCreator.username.charAt(0).toUpperCase()
-            )}
-          </Avatar>
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-            {post.userCreator.username}
-          </Typography>
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Avatar sx={{ bgcolor: 'primary.main' }}>
+              {post.userCreator.profileImage ? (
+                <img src={post.userCreator.profileImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                post.userCreator.username.charAt(0).toUpperCase()
+              )}
+            </Avatar>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+              {post.userCreator.username}
+            </Typography>
+          </Box>
+          
+          {isCreator && (
+            <Box>
+              <IconButton onClick={handleMenuClick} size="small">
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={menuOpen}
+                onClose={handleMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              >
+                <MenuItem onClick={handleEditClick}>
+                  <ListItemIcon>
+                    <EditIcon fontSize="small" />
+                  </ListItemIcon>
+                  Edit
+                </MenuItem>
+                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                  <ListItemIcon>
+                    <DeleteIcon fontSize="small" color="error" />
+                  </ListItemIcon>
+                  Delete
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
         </Box>
 
-        {/* Post Image */}
-        {post.imageUrl && (
-          <CardMedia
-            component="img"
-            height="400"
-            image={post.imageUrl}
-            alt="Post image"
-            sx={{
-              objectFit: 'cover',
-              borderTop: '1px solid',
-              borderBottom: '1px solid',
-              borderColor: 'divider'
-            }}
-          />
+
+        {/* Post Image Carousel */}
+        {currentImageUrl && (
+          <Box sx={{ position: 'relative' }}>
+            <CardMedia
+              component="img"
+              height="400"
+              image={currentImageUrl}
+              alt="Post image"
+              sx={{
+                objectFit: 'cover',
+                borderTop: '1px solid',
+                borderBottom: '1px solid',
+                borderColor: 'divider'
+              }}
+            />
+            {hasMultipleImages && (
+              <>
+                <IconButton
+                  onClick={handlePrevImage}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: 8,
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                  }}
+                  size="small"
+                >
+                  <ArrowBackIosNewIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  onClick={handleNextImage}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: 8,
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                  }}
+                  size="small"
+                >
+                  <ArrowForwardIosIcon fontSize="small" />
+                </IconButton>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 8,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    gap: 0.5
+                  }}
+                >
+                  {post.photos!.map((_, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: index === currentImageIndex ? 'primary.main' : 'rgba(255, 255, 255, 0.7)',
+                        boxShadow: '0 0 2px rgba(0,0,0,0.5)',
+                        transition: 'background-color 0.2s',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setCurrentImageIndex(index)}
+                    />
+                  ))}
+                </Box>
+              </>
+            )}
+          </Box>
         )}
 
         {/* Post Content */}
         <CardContent sx={{ pb: 1 }}>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+          {post.destination && (
+            <Typography variant="subtitle1" fontWeight="bold" color="text.primary" gutterBottom>
+              📍 {post.destination}
+            </Typography>
+          )}
+          {(post.startDate || post.endDate) && (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              🗓️ {post.startDate ? new Date(post.startDate).toLocaleDateString() : 'N/A'} - {post.endDate ? new Date(post.endDate).toLocaleDateString() : 'N/A'}
+            </Typography>
+          )}
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 1, mt: 1, whiteSpace: 'pre-wrap' }}>
             {post.content}
           </Typography>
         </CardContent>
@@ -155,6 +333,38 @@ const PostComponent = ({ post }: { post: Post }) => {
           </Stack>
         </Box>
       </Card>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => !isDeleting && setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Post</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this post? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="inherit" disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained" disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {editModalOpen && (
+        <EditPostModal
+          open={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          post={post}
+          onPostUpdated={(updatedPost) => {
+            if (onUpdate) onUpdate(updatedPost);
+            setEditModalOpen(false);
+          }}
+        />
+      )}
     </Box>
   );
 };

@@ -1,9 +1,8 @@
 import multer from "multer";
 import express from "express";
-import uploadFile from "../controllers/fileController";
+import uploadFile, { FILES_PATH } from "../controllers/fileController";
 import { authenticate } from "../middlewares/authMiddleware";
 import { mkdirSync } from "node:fs";
-import { FILES_PATH } from "../config/filePaths";
 
 
 const storage = multer.diskStorage({
