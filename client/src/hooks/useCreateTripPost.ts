@@ -98,7 +98,7 @@ export const useCreateTripPost = () => {
 
       await createTripPost({
         ...formData,
-        photos: [],
+        photos: selectedImages,
         userCreatorID: userId,
       });
       setSuccess(true);

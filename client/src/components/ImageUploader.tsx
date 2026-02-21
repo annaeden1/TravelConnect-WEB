@@ -11,8 +11,9 @@ interface ImageUploaderProps {
 const ImageUploader = ({ onImagesSelected, selectedImages }: ImageUploaderProps) => {
 
   const handleFilesSelected = (files: File[]) => {
-    // Forward the files to the parent component
-    onImagesSelected(files);
+    // Append the new files to the already selected ones
+    const updatedFiles = [...selectedImages, ...files];
+    onImagesSelected(updatedFiles);
   };
 
   // Helper validation simulation for UI purposes
@@ -30,8 +31,9 @@ const ImageUploader = ({ onImagesSelected, selectedImages }: ImageUploaderProps)
 
       <ImagePreviewList 
         selectedImages={selectedImages}
-        onRemoveImage={() => {
-          // Remove logic omitted for now as per original component
+        onRemoveImage={(index) => {
+          const updatedFiles = selectedImages.filter((_, i) => i !== index);
+          onImagesSelected(updatedFiles);
         }} 
       />
     </Box>

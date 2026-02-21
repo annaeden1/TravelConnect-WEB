@@ -12,7 +12,19 @@ export interface TripPostData {
 }
 
 export const createTripPost = async (data: TripPostData & { userCreatorID: string }): Promise<any> => {
-  const response = await api.post("/post", data);
+  const formData = new FormData();
+  formData.append("destination", data.destination);
+  formData.append("startDate", data.startDate);
+  formData.append("endDate", data.endDate);
+  formData.append("content", data.content);
+  formData.append("userCreatorID", data.userCreatorID);
+
+  data.photos.forEach((file) => {
+    formData.append("photos", file);
+  });
+
+  const response = await api.post("/post", formData);
+  
   return response.data;
 };
 
@@ -51,7 +63,7 @@ async function convertPostsData (posts: any): Promise<Post[]> {
         _id: post._id,
         content: post.content,
         userCreatorID: post.userCreatorID,
-        imageUrl: post.imageUrl,
+        imageUrl: post.imageUrl || (post.photos && post.photos.length > 0 ? post.photos[0] : undefined),
         userCreator,
         likesCount: post.likes.length || 0,
         isLiked: isLiked || false,

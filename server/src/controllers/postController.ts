@@ -2,10 +2,41 @@ import { Types } from "mongoose";
 import { postModel, type IPost } from "../models/postModel";
 import genericController from "./genericController";
 import type { Request, Response } from "express";
+import { FILES_PATH } from "../routes/fileRouter";
 
 class postController extends genericController<IPost> {
   constructor() {
     super(postModel);
+  }
+
+  async create(req: Request, res: Response) {
+    try {
+      const obj = req.body;
+      const files = req.files as Express.Multer.File[];
+      
+      const base = `${req.protocol}://${req.get("host")}`;
+      const photos: string[] = [];
+      
+      if (files && files.length > 0) {
+        files.forEach(file => {
+          photos.push(`${base}/${FILES_PATH}${file.filename}`);
+        });
+      }
+
+      obj.photos = photos;
+      
+      if (photos.length > 0) {
+        // Set the primary imageUrl for backwards compatibility
+        obj.imageUrl = photos[0];
+      }
+      
+      const response = await this.model.create(obj);
+      res.status(201).json(response);
+    } catch (error) {
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    }
   }
 
   async handleLike(req: Request, res: Response) {

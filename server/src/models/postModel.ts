@@ -41,6 +41,10 @@ const postSchema = new mongoose.Schema<IPost>({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+  imageUrl: {
+    type: String,
+    required: false,
+  },
 });
 
 const postModel = mongoose.model("post", postSchema);
