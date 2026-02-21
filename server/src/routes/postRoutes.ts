@@ -161,6 +161,50 @@ router.get("/:_id", authenticate, postController.getById.bind(postController));
 
 /**
  * @swagger
+ * /post/search:
+ *   post:
+ *     summary: Search posts using free text (LLM-powered)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - query
+ *             properties:
+ *               query:
+ *                 type: string
+ *                 description: Free text search query
+ *                 example: "popular posts about hiking with photos"
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 query:
+ *                   type: string
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Post'
+ *       400:
+ *         description: Invalid request (missing or empty query)
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/search", authenticate, postController.searchPosts.bind(postController));
+
+/**
+ * @swagger
  * /post/handle-like/{_id}:
  *   post:
  *     summary: Toggle like status for a post

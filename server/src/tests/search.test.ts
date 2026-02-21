@@ -3,6 +3,7 @@ import intApp from "../index";
 import { Express } from "express";
 import { postModel } from "../models/postModel";
 import { getLoggedInUser, UserData } from "./types/userData";
+import searchService from "../services/searchService";
 
 let loginUser: UserData;
 let app: Express;
@@ -127,6 +128,27 @@ describe("Search API Endpoint", () => {
 
       const contents = res.body.results.map((p: any) => p.content);
       expect(contents.some((c: string) => c.toLowerCase().includes("bali"))).toBe(true);
+    });
+
+    test("should fallback to simple text search when advanced search fails", async () => {
+      // Mock advanced search to fail
+      const searchSpy = jest.spyOn(searchService, "searchPosts").mockRejectedValue(new Error("Advanced search failed"));
+
+      const res = await request(app)
+        .post("/post/search")
+        .set("Authorization", "Bearer " + loginUser.token)
+        .send({ query: "Swiss Alps" });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.results.length).toBeGreaterThanOrEqual(1);
+      
+      const contents = res.body.results.map((p: any) => p.content);
+      expect(contents.some((c: string) => c.includes("Swiss"))).toBe(true);
+      
+      expect(searchSpy).toHaveBeenCalled();
+      
+      // Restore the mock
+      searchSpy.mockRestore();
     });
   });
 });
