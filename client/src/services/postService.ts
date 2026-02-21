@@ -1,7 +1,34 @@
+import api from "./api";
 import { getCurrentUserId } from "../context/AuthContext";
 import type { Post } from "../utils/types/post.interface";
-import api from "./api";
 import { getUserDetails } from "./userService";
+
+export interface TripPostData {
+  destination: string;
+  startDate: string;
+  endDate: string;
+  content: string;
+  photos: File[];
+}
+
+export const createTripPost = async (data: TripPostData & { userCreatorID: string }): Promise<any> => {
+  const formData = new FormData();
+  formData.append("destination", data.destination);
+  formData.append("startDate", data.startDate);
+  formData.append("endDate", data.endDate);
+  formData.append("content", data.content);
+  formData.append("userCreatorID", data.userCreatorID);
+
+  data.photos.forEach((file) => {
+    formData.append("photos", file);
+  });
+
+  const response = await api.post("/post", formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  
+  return response.data;
+};
 
 export const getAllPosts = async (): Promise<Post[]> => {
   const data = (await api.get<Post[]>("/post/")).data;
@@ -35,16 +62,23 @@ export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
 };
 
 async function convertPostsData (posts: any): Promise<Post[]> {
-    const convertedPosts: Post[] = await Promise.all(
+  const convertedPosts: Post[] = await Promise.all(
     posts.map(async (post: any) => {
-      const userCreator = await getUserDetails(post.userCreatorID);
+      let userCreator: { username: string; profileImage: string };
+      try {
+        userCreator = await getUserDetails(post.userCreatorID);
+      } catch (error) {
+        // user not found — show post anyway with a fallback
+        console.warn(`User details not found for post ${post._id}. Using fallback.`);
+        userCreator = { username: "Unknown User", profileImage: "" };
+      }
       const isLiked = post.likes.includes(getCurrentUserId());
 
       return {
         _id: post._id,
         content: post.content,
         userCreatorID: post.userCreatorID,
-        imageUrl: post.imageUrl,
+        imageUrl: post.photos && post.photos.length > 0 ? post.photos[0] : undefined,
         userCreator,
         likesCount: post.likes.length || 0,
         isLiked: isLiked || false,

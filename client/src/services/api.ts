@@ -27,7 +27,8 @@ const processQueue = (error: any, token: string | null = null) => {
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accessToken = localStorage.getItem('travelconnect_tokens') ? JSON.parse(localStorage.getItem('travelconnect_tokens') as string).accessToken : null;
+    const storedTokens = localStorage.getItem('travelconnect_tokens');
+    const accessToken = storedTokens ? JSON.parse(storedTokens).accessToken : null;
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

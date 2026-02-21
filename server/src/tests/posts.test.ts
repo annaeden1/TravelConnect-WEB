@@ -9,22 +9,31 @@ let loginUser: UserData;
 const testData: PostData[] = [
   {
     _id: "69590fb18974fd6b3614707c",
+    destination: "Tokyo, Japan",
+    startDate: "2024-05-01T00:00:00Z",
+    endDate: "2024-05-15T00:00:00Z",
     content: "This is a test post",
-    imageUrl: "http://example.com/post-image.jpg",
+    photos: ["http://example.com/post-image.jpg"],
     userCreatorID: "507f1f77bcf86cd799439011",
     likes: []
   },
   {
     _id: "69590fb18974fd6b3614707d",
+    destination: "Rome, Italy",
+    startDate: "2024-06-01T00:00:00Z",
+    endDate: "2024-06-10T00:00:00Z",
     content: "Another test post",
-    imageUrl: "http://example.com/post-image2.jpg",
+    photos: ["http://example.com/post-image2.jpg"],
     userCreatorID: "507f1f77bcf86cd799439012",
     likes: []
   },
   {
     _id: "69590fb18974fd6b3614707e",
+    destination: "Paris, France",
+    startDate: "2024-07-01T00:00:00Z",
+    endDate: "2024-07-05T00:00:00Z",
     content: "Yet another test post",
-    imageUrl: "http://example.com/post-image3.jpg",
+    photos: ["http://example.com/post-image3.jpg"],
     userCreatorID: "507f1f77bcf86cd799439013",
     likes: []
   },

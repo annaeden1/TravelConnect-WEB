@@ -1,11 +1,10 @@
 import multer from "multer";
 import express from "express";
 import uploadFile from "../controllers/fileController";
-import { mkdirSync } from "node:fs";
 import { authenticate } from "../middlewares/authMiddleware";
+import { mkdirSync } from "node:fs";
+import { FILES_PATH } from "../config/filePaths";
 
-export const FILES_PATH = "public/";
-const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,7 +16,9 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "." + ext);
   },
 });
-const upload = multer({ storage: storage });
+export const upload = multer({ storage });
+
+const router = express.Router();
 
 /**
  * @swagger

@@ -2,19 +2,35 @@ import mongoose from "mongoose";
 
 interface IPost {
   _id: mongoose.Types.ObjectId;
+  destination: string;
+  startDate: Date;
+  endDate: Date;
   content: string;
-  imageUrl?: string;
+  photos?: string[];
   likes?: mongoose.Types.ObjectId[];
   userCreatorID: mongoose.Types.ObjectId;
 }
 
 const postSchema = new mongoose.Schema<IPost>({
+  destination: {
+    type: String,
+    required: true,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
   content: {
     type: String,
     required: true,
   },
-  imageUrl: {
-    type: String,
+  photos: {
+    type: [String],
+    default: [],
   },
   likes: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -24,6 +40,7 @@ const postSchema = new mongoose.Schema<IPost>({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+
 });
 
 const postModel = mongoose.model("post", postSchema);

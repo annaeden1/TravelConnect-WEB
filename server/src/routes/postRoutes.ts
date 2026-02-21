@@ -1,6 +1,7 @@
 import express from "express";
 import postController from "../controllers/postController";
 import { authenticate } from "../middlewares/authMiddleware";
+import { upload } from "./fileRouter";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", authenticate, postController.create.bind(postController));
+router.post("/", authenticate, upload.array("photos", 5), postController.create.bind(postController));
 
 /**
  * @swagger
