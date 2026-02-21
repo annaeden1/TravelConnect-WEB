@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type TripFormData } from "../components/TripForm";
 import { createTripPost } from "../services/postService";
 import { getCurrentUserId } from "../context/AuthContext";
+import { validateTripForm } from "../utils/validation";
 
 export const useCreateTripPost = () => {
   const [formData, setFormData] = useState<TripFormData>({
@@ -41,44 +42,17 @@ export const useCreateTripPost = () => {
   };
 
   const validate = (): boolean => {
-    const errors: Record<string, string> = {};
-    let isValid = true;
-
-    if (!formData.destination.trim()) {
-      errors.destination = "Destination is required";
-      isValid = false;
-    }
-
-    if (!formData.startDate) {
-      errors.startDate = "Start date is required";
-      isValid = false;
-    }
-
-    if (!formData.endDate) {
-      errors.endDate = "End date is required";
-      isValid = false;
-    }
-
-    if (
-      formData.startDate &&
-      formData.endDate &&
-      new Date(formData.endDate) < new Date(formData.startDate)
-    ) {
-      errors.endDate = "End date must be after start date";
-      isValid = false;
-    }
-
-    if (!formData.content.trim()) {
-      errors.content = "Content is required";
-      isValid = false;
-    }
-
-    if (selectedImages.length > 5) {
-      setError("You cannot upload more than 5 images");
-      isValid = false;
-    }
-
+    const { isValid, errors, message } = validateTripForm(
+      formData,
+      selectedImages.length
+    );
+    
     setValidationErrors(errors);
+    
+    if (!isValid && message) {
+      setError(message);
+    }
+    
     return isValid;
   };
 

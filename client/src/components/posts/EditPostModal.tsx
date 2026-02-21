@@ -14,6 +14,7 @@ import TripForm, { type TripFormData } from '../TripForm';
 import { updatePost } from '../../services/postService';
 import type { Post } from '../../utils/types/post.interface';
 import ImageUploader from '../ImageUploader';
+import { validateTripForm } from '../../utils/validation';
 
 interface EditPostModalProps {
   open: boolean;
@@ -39,19 +40,35 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const handleFormChange = (newData: TripFormData) => {
     setFormData(newData);
+    const changedField = Object.keys(newData).find(
+      (key) =>
+        newData[key as keyof TripFormData] !==
+        formData[key as keyof TripFormData],
+    );
+
+    if (changedField && validationErrors[changedField]) {
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[changedField];
+        return newErrors;
+      });
+    }
   };
 
   const handleSubmit = async () => {
-    if (!formData.content.trim()) {
-      setError('Content cannot be empty');
-      return;
-    }
-    
-    if (existingPhotos.length + newPhotos.length > 5) {
-      setError('You cannot have more than 5 images in a post');
+    const validationResult = validateTripForm(
+      formData,
+      existingPhotos.length + newPhotos.length
+    );
+
+    setValidationErrors(validationResult.errors);
+
+    if (!validationResult.isValid) {
+      if (validationResult.message) setError(validationResult.message);
       return;
     }
 
@@ -96,6 +113,7 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
         <TripForm 
           data={formData} 
           onChange={handleFormChange}
+          errors={validationErrors}
         />
 
         <Box sx={{ mt: 3 }}>
