@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { userModel } from "../models/userModel";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 
 const sendError = (res: Response, message: string) => {
     res.status(400).json({ error: message });
@@ -172,4 +173,45 @@ const refreshToken = async (req: Request, res: Response) => {
     }
 };
 
-export { refreshToken, login, register, logout };
+const client = new OAuth2Client();
+
+const googleLogin = async (req: Request, res: Response) => {
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: req.body.credential,
+            audience: process.env.GOOGLE_CLIENT_ID});
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email) {
+            return sendError(res, "Google login failed");
+        } else {
+            let user = await userModel.findOne({email: payload.email});
+            let userId: string;
+            if (user) {
+                userId = user._id.toString();
+            } else {
+                user = await userModel.create({
+                    email: payload.email,
+                    username: payload.name,
+                    profileImage: payload.picture,
+                    password: "", // No password since it's a Google login
+                });
+                userId = user._id.toString();
+            }
+            const userTokens = generateUserTokens(userId);
+            user.refreshTokens.push(userTokens.refreshToken);
+            await user.save();
+            res.status(200).send({
+                username: payload.name,
+                accessToken: userTokens.accessToken,
+                refreshToken: userTokens.refreshToken,
+                profileImage: payload.picture,
+                email: payload.email,
+                _id: userId,
+            });
+        }
+    } catch (error) {
+        return sendError(res, `Google login failed: ${error}`);
+    }   
+}
+
+export { refreshToken, login, register, logout, googleLogin };

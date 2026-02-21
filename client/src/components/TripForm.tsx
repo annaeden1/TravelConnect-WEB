@@ -5,7 +5,7 @@ export interface TripFormData {
   destination: string;
   startDate: string;
   endDate: string;
-  description: string;
+  content: string;
 }
 
 interface TripFormProps {
@@ -92,16 +92,16 @@ const TripForm = ({ data, onChange, errors = {} }: TripFormProps) => {
           size="small"
           required
           fullWidth
-          id="description"
-          name="description"
-          label="Description"
+          id="content"
+          name="content"
+          label="Content"
           variant="outlined"
           multiline
           rows={3}
-          value={data.description}
+          value={data.content}
           onChange={handleChange}
-          error={!!errors.description}
-          helperText={errors.description}
+          error={!!errors.content}
+          helperText={errors.content}
           placeholder="Tell us about your trip plan..."
         />
       </Stack>

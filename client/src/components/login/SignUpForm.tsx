@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Box, Button, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import ClientRoutes from "../../utils/appRoutes";
 import { validateSignUpForm } from "../../utils/validation";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 
 const textFieldSx: SxProps<Theme> = {
   "& .MuiOutlinedInput-root": {
@@ -32,7 +40,7 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
 
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -52,7 +60,8 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
       toast.success("Account created successfully!");
       navigate(ClientRoutes.HOME);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Registration failed";
+      const errorMessage =
+        err instanceof Error ? err.message : "Registration failed";
       if (errorMessage.toLowerCase().includes("email")) {
         setEmailError(errorMessage);
       }
@@ -62,15 +71,27 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    console.log("Google Sign In clicked");
+  const onGoogleSignInSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
+    try {
+      await googleLogin(credentialResponse);
+      toast.success("Welcome!");
+      navigate(ClientRoutes.HOME);
+    } catch (error) {
+      console.error("Google Sign In error:", error);
+      toast.error("Google Sign In failed");
+    }
+  };
+
+  const onGoogleSignInError = () => {
+    toast.error("Google Sign In failed");
   };
 
   return (
     <Box
       sx={{
         width: "50%",
-        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -81,7 +102,10 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
     >
       <Stack spacing={3} sx={{ width: "100%", maxWidth: "22rem" }}>
         <Box sx={{ mb: "1rem" }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 700, color: "#1a1a2e", mb: "0.5rem" }}
+          >
             Create Account
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary" }}>
@@ -148,7 +172,11 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
                 },
               }}
             >
-              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Sign Up"
+              )}
             </Button>
           </Stack>
         </form>
@@ -178,34 +206,30 @@ const SignUpForm = ({ onSwitchToLogin }: SignUpFormProps) => {
         </Button>
 
         <Divider sx={{ my: "0.5rem" }}>
-          <Typography variant="body2" sx={{ color: "text.secondary", px: "1rem" }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", px: "1rem" }}
+          >
             or
           </Typography>
         </Divider>
-
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={handleGoogleSignIn}
-          disabled={isLoading}
-          startIcon={<GoogleIcon />}
+        <Box
           sx={{
-            borderColor: "#dadce0",
-            color: "#3c4043",
-            borderRadius: "0.75rem",
-            py: "0.875rem",
-            fontSize: "1rem",
-            fontWeight: 500,
-            textTransform: "none",
-            backgroundColor: "#ffffff",
-            "&:hover": {
-              borderColor: "#d2e3fc",
-              backgroundColor: "#f8faff",
-            },
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          Sign up with Google
-        </Button>
+          <GoogleLogin
+            onSuccess={onGoogleSignInSuccess}
+            onError={onGoogleSignInError}
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            width="352px"
+            text="signup_with"
+          />
+        </Box>
       </Stack>
     </Box>
   );

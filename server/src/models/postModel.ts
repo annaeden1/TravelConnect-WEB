@@ -5,8 +5,10 @@ interface IPost {
   destination: string;
   startDate: Date;
   endDate: Date;
-  description: string;
+  content: string;
   photos?: string[];
+  imageUrl?: string;
+  likes?: mongoose.Types.ObjectId[];
   userCreatorID: mongoose.Types.ObjectId;
 }
 
@@ -23,13 +25,17 @@ const postSchema = new mongoose.Schema<IPost>({
     type: Date,
     required: true,
   },
-  description: {
+  content: {
     type: String,
     required: true,
   },
   photos: {
     type: [String],
     default: [],
+  },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: []
   },
   userCreatorID: {
     type: mongoose.Schema.Types.ObjectId,

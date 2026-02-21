@@ -8,7 +8,7 @@ export const useCreateTripPost = () => {
     destination: "",
     startDate: "",
     endDate: "",
-    description: "",
+    content: "",
   });
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -68,8 +68,8 @@ export const useCreateTripPost = () => {
       isValid = false;
     }
 
-    if (!formData.description.trim()) {
-      errors.description = "Description is required";
+    if (!formData.content.trim()) {
+      errors.content = "Content is required";
       isValid = false;
     }
 
@@ -106,7 +106,7 @@ export const useCreateTripPost = () => {
         destination: "",
         startDate: "",
         endDate: "",
-        description: "",
+        content: "",
       });
       setSelectedImages([]);
     } catch (err) {
