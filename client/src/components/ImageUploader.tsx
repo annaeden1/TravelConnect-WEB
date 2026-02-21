@@ -1,14 +1,15 @@
-import React from 'react';
 import { Box, Alert } from '@mui/material';
 import ImageDropzone from './image-upload/ImageDropzone';
-import ImagePreviewList from './image-upload/ImagePreviewList';
+import ImagePreviewList, { type ImagePreviewItem } from './image-upload/ImagePreviewList';
 
 interface ImageUploaderProps {
   onImagesSelected: (files: File[]) => void;
   selectedImages: File[];
+  existingImages?: string[];
+  onExistingImagesChange?: (images: string[]) => void;
 }
 
-const ImageUploader = ({ onImagesSelected, selectedImages }: ImageUploaderProps) => {
+const ImageUploader = ({ onImagesSelected, selectedImages, existingImages = [], onExistingImagesChange }: ImageUploaderProps) => {
 
   const handleFilesSelected = (files: File[]) => {
     // Append the new files to the already selected ones
@@ -16,8 +17,25 @@ const ImageUploader = ({ onImagesSelected, selectedImages }: ImageUploaderProps)
     onImagesSelected(updatedFiles);
   };
 
+  const totalImages = selectedImages.length + existingImages.length;
   // Helper validation simulation for UI purposes
-  const isError = selectedImages.length > 5;
+  const isError = totalImages > 5;
+
+  const combinedImages: ImagePreviewItem[] = [...existingImages, ...selectedImages];
+
+  const handleRemoveImage = (index: number) => {
+    if (index < existingImages.length) {
+      if (onExistingImagesChange) {
+        const newExisting = [...existingImages];
+        newExisting.splice(index, 1);
+        onExistingImagesChange(newExisting);
+      }
+    } else {
+      const fileIndex = index - existingImages.length;
+      const updatedFiles = selectedImages.filter((_, i) => i !== fileIndex);
+      onImagesSelected(updatedFiles);
+    }
+  };
 
   return (
     <Box>
@@ -25,16 +43,13 @@ const ImageUploader = ({ onImagesSelected, selectedImages }: ImageUploaderProps)
 
       {isError && (
         <Alert severity="error" sx={{ mt: "1rem" }}>
-          You have selected more than 5 images. Please remove some images.
+          You have selected more than 5 images limit. Please remove some images.
         </Alert>
       )}
 
       <ImagePreviewList 
-        selectedImages={selectedImages}
-        onRemoveImage={(index) => {
-          const updatedFiles = selectedImages.filter((_, i) => i !== index);
-          onImagesSelected(updatedFiles);
-        }} 
+        selectedImages={combinedImages}
+        onRemoveImage={handleRemoveImage} 
       />
     </Box>
   );

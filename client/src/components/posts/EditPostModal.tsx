@@ -13,6 +13,7 @@ import { useState } from 'react';
 import TripForm, { type TripFormData } from '../TripForm';
 import { updatePost } from '../../services/postService';
 import type { Post } from '../../utils/types/post.interface';
+import ImageUploader from '../ImageUploader';
 
 interface EditPostModalProps {
   open: boolean;
@@ -28,6 +29,14 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
     endDate: post.endDate ? post.endDate.split('T')[0] : '', 
     content: post.content,
   });
+  
+  const [existingPhotos, setExistingPhotos] = useState<string[]>(
+    post.photos && post.photos.length > 0 
+      ? post.photos 
+      : (post.imageUrl ? [post.imageUrl] : [])
+  );
+  const [newPhotos, setNewPhotos] = useState<File[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,25 +49,36 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
       setError('Content cannot be empty');
       return;
     }
+    
+    if (existingPhotos.length + newPhotos.length > 5) {
+      setError('You cannot have more than 5 images in a post');
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const updatedPostData = {
-        content: formData.content,
-        // Backend put route accepts these but they aren't on Post interface currently. Sending them anyway as they are in the schema.
-        ...(formData.destination ? { destination: formData.destination } : {}),
-        ...(formData.startDate ? { startDate: formData.startDate } : {}),
-        ...(formData.endDate ? { endDate: formData.endDate } : {}),
-      };
-
-      await updatePost(post._id, updatedPostData);
+      const submitData = new FormData();
+      submitData.append('content', formData.content);
       
-      onPostUpdated({
-        ...post,
-        ...updatedPostData,
-      } as Post);
+      if (formData.destination) submitData.append('destination', formData.destination);
+      if (formData.startDate) submitData.append('startDate', formData.startDate);
+      if (formData.endDate) submitData.append('endDate', formData.endDate);
+
+      // Append existing photos (URLs to keep)
+      existingPhotos.forEach((photoUrl) => {
+        submitData.append('existingPhotos', photoUrl);
+      });
+
+      // Append new photos
+      newPhotos.forEach((file) => {
+        submitData.append('photos', file);
+      });
+
+      const updatedPostData = await updatePost(post._id, submitData);
+      
+      onPostUpdated(updatedPostData);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update post');
@@ -73,16 +93,23 @@ const EditPostModal = ({ open, onClose, post, onPostUpdated }: EditPostModalProp
       <DialogContent dividers>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         
-        <Box sx={{ mb: 2 }}>
-           <Typography variant="body2" color="text.secondary" gutterBottom>
-              Note: You can only edit the text content of your post. Photos cannot be changed after creation.
-           </Typography>
-        </Box>
-
         <TripForm 
           data={formData} 
           onChange={handleFormChange}
         />
+
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>
+            Photos (Max 5)
+          </Typography>
+          <ImageUploader 
+            existingImages={existingPhotos}
+            onExistingImagesChange={setExistingPhotos}
+            selectedImages={newPhotos}
+            onImagesSelected={setNewPhotos}
+          />
+        </Box>
+
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button onClick={onClose} disabled={loading} color="inherit">

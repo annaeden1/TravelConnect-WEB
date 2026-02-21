@@ -23,6 +23,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { useEffect, useState } from "react";
 import { getAllComentsOfPost, deletePost } from "../../services/postService";
 import { handleLike } from "../../services/postService";
@@ -46,6 +48,7 @@ const PostComponent = ({ post, onDelete, onUpdate }: PostComponentProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const isCreator = getCurrentUserId() === post.userCreatorID;
   const menuOpen = Boolean(anchorEl);
@@ -120,6 +123,21 @@ const PostComponent = ({ post, onDelete, onUpdate }: PostComponentProps) => {
     }
   };
 
+  const hasMultipleImages = post.photos && post.photos.length > 1;
+  const currentImageUrl = post.photos && post.photos.length > 0 ? post.photos[currentImageIndex] : post.imageUrl;
+
+  const handleNextImage = () => {
+    if (post.photos) {
+      setCurrentImageIndex((prev) => (prev === post.photos!.length - 1 ? 0 : prev + 1));
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (post.photos) {
+      setCurrentImageIndex((prev) => (prev === 0 ? post.photos!.length - 1 : prev - 1));
+    }
+  };
+
   return (
     <Box sx={{
       display: 'flex',
@@ -181,20 +199,80 @@ const PostComponent = ({ post, onDelete, onUpdate }: PostComponentProps) => {
         </Box>
 
 
-        {/* Post Image */}
-        {post.imageUrl && (
-          <CardMedia
-            component="img"
-            height="400"
-            image={post.imageUrl}
-            alt="Post image"
-            sx={{
-              objectFit: 'cover',
-              borderTop: '1px solid',
-              borderBottom: '1px solid',
-              borderColor: 'divider'
-            }}
-          />
+        {/* Post Image Carousel */}
+        {currentImageUrl && (
+          <Box sx={{ position: 'relative' }}>
+            <CardMedia
+              component="img"
+              height="400"
+              image={currentImageUrl}
+              alt="Post image"
+              sx={{
+                objectFit: 'cover',
+                borderTop: '1px solid',
+                borderBottom: '1px solid',
+                borderColor: 'divider'
+              }}
+            />
+            {hasMultipleImages && (
+              <>
+                <IconButton
+                  onClick={handlePrevImage}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: 8,
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                  }}
+                  size="small"
+                >
+                  <ArrowBackIosNewIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  onClick={handleNextImage}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: 8,
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.9)' }
+                  }}
+                  size="small"
+                >
+                  <ArrowForwardIosIcon fontSize="small" />
+                </IconButton>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 8,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    gap: 0.5
+                  }}
+                >
+                  {post.photos!.map((_, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: index === currentImageIndex ? 'primary.main' : 'rgba(255, 255, 255, 0.7)',
+                        boxShadow: '0 0 2px rgba(0,0,0,0.5)',
+                        transition: 'background-color 0.2s',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setCurrentImageIndex(index)}
+                    />
+                  ))}
+                </Box>
+              </>
+            )}
+          </Box>
         )}
 
         {/* Post Content */}

@@ -82,6 +82,7 @@ async function convertPostsData (posts: any): Promise<Post[]> {
         content: post.content,
         userCreatorID: post.userCreatorID,
         imageUrl: post.photos && post.photos.length > 0 ? post.photos[0] : undefined,
+        photos: post.photos || [],
         userCreator,
         likesCount: post.likes.length || 0,
         isLiked: isLiked || false,
@@ -96,7 +97,11 @@ export const deletePost = async (postId: string): Promise<void> => {
   await api.delete(`/post/${postId}`);
 };
 
-export const updatePost = async (postId: string, data: Partial<TripPostData>): Promise<Post> => {
-  const response = await api.put(`/post/${postId}`, data);
-  return response.data;
+export const updatePost = async (postId: string, data: FormData): Promise<Post> => {
+  const response = await api.put(`/post/${postId}`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  
+  const convertedPost = await convertPostsData([response.data]);
+  return convertedPost[0];
 };

@@ -5,6 +5,7 @@ export interface Post {
   endDate: string;
   content: string;
   imageUrl?: string;
+  photos?: string[];
   userCreatorID: string;
   userCreator: { username: string, profileImage: string };
   likesCount?: number;

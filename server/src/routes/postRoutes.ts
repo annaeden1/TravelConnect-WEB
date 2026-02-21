@@ -90,7 +90,7 @@ router.delete("/:_id", authenticate, postController.delete.bind(postController))
  *       500:
  *         description: Internal server error
  */
-router.put("/:_id", authenticate, postController.update.bind(postController));
+router.put("/:_id", authenticate, upload.array("photos", 5), postController.update.bind(postController));
 
 /**
  * @swagger
