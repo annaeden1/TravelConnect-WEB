@@ -127,12 +127,16 @@ describe("Search API Endpoint", () => {
       expect(res.body.results.length).toBeGreaterThanOrEqual(1);
 
       const contents = res.body.results.map((p: any) => p.content);
-      expect(contents.some((c: string) => c.toLowerCase().includes("bali"))).toBe(true);
+      expect(
+        contents.some((c: string) => c.toLowerCase().includes("bali")),
+      ).toBe(true);
     });
 
     test("should fallback to simple text search when advanced search fails", async () => {
       // Mock advanced search to fail
-      const searchSpy = jest.spyOn(searchService, "searchPosts").mockRejectedValue(new Error("Advanced search failed"));
+      const searchSpy = jest
+        .spyOn(searchService, "searchPosts")
+        .mockRejectedValue(new Error("Advanced search failed"));
 
       const res = await request(app)
         .post("/post/search")
@@ -141,12 +145,12 @@ describe("Search API Endpoint", () => {
 
       expect(res.statusCode).toEqual(200);
       expect(res.body.results.length).toBeGreaterThanOrEqual(1);
-      
+
       const contents = res.body.results.map((p: any) => p.content);
       expect(contents.some((c: string) => c.includes("Swiss"))).toBe(true);
-      
+
       expect(searchSpy).toHaveBeenCalled();
-      
+
       // Restore the mock
       searchSpy.mockRestore();
     });
