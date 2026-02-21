@@ -1,9 +1,23 @@
+import multer from "multer";
 import express from "express";
 import uploadFile from "../controllers/fileController";
 import { authenticate } from "../middlewares/authMiddleware";
-import { upload } from "../middlewares/uploadMiddleware";
+import { mkdirSync } from "node:fs";
 
 export const FILES_PATH = "public/";
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    mkdirSync(FILES_PATH, { recursive: true });
+    cb(null, FILES_PATH);
+  },
+  filename: function (req, file, cb) {
+    const ext = file.originalname.split(".").filter(Boolean).slice(1).join(".");
+    cb(null, Date.now() + "." + ext);
+  },
+});
+export const upload = multer({ storage });
+
 const router = express.Router();
 
 /**

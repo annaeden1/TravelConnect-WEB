@@ -1,7 +1,7 @@
 import express from "express";
 import postController from "../controllers/postController";
 import { authenticate } from "../middlewares/authMiddleware";
-import { upload } from "../middlewares/uploadMiddleware";
+import { upload } from "./fileRouter";
 
 const router = express.Router();
 

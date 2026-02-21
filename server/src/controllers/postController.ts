@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { postModel, type IPost } from "../models/postModel";
 import genericController from "./genericController";
 import type { Request, Response } from "express";
-import { FILES_PATH } from "../routes/fileRouter";
+import { getFileUrl } from "./fileController";
 import llmService from "../services/llmService";
 import searchService from "../services/searchService";
 
@@ -16,12 +16,11 @@ class postController extends genericController<IPost> {
       const obj = req.body;
       const files = req.files as Express.Multer.File[];
 
-      const base = `${req.protocol}://${req.get("host")}`;
       const photos: string[] = [];
 
       if (files && files.length > 0) {
         files.forEach((file) => {
-          photos.push(`${base}/${FILES_PATH}${file.filename}`);
+          photos.push(getFileUrl(req, file.filename));
         });
       }
 
