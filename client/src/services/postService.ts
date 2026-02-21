@@ -21,6 +21,12 @@ export const handleLike = async (postId: string, userId: string): Promise<{ like
   return (await api.post<{ likesCount: number }>(`/post/handle-like/${postId}`, {userId})).data;
 };
 
+export const searchPosts = async (query: string): Promise<Post[]> => {
+  const response = await api.post<{ query: string; results: any[] }>("/post/search", { query });
+  const posts: Post[] = await convertPostsData(response.data.results);
+  return posts;
+};
+
 export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
   const userPosts =  await api.get<Post[]>(`/post?userCreatorID=${userId}`);
 
