@@ -12,7 +12,7 @@ import { useEffect, useState, useRef } from "react";
 import type { Post } from "../utils/types/post.interface";
 import { getPostsByUserId } from "../services/postService";
 import { getCurrentUserId, useAuth } from "../context/AuthContext";
-import { Logout, Edit, Save, Cancel } from "@mui/icons-material";
+import { Edit, Save, Cancel } from "@mui/icons-material";
 import avatar from "../assets/avatar.jpg";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { uploadFile } from "../services/fileService";
@@ -31,7 +31,7 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { logout, user, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
 
   useEffect(() => {
     if (user?.username) {
@@ -64,14 +64,6 @@ const Profile = () => {
     };
     fetchUserPosts();
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      toast.error("Could not logout");
-    }
-  };
 
   const imageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files;
@@ -166,11 +158,6 @@ const Profile = () => {
 
   return (
     <Box sx={{ maxWidth: 700, mx: "auto", p: 2 }}>
-      <Box display="flex" justifyContent="flex-end">
-        <Button onClick={handleLogout} startIcon={<Logout />} color="inherit">
-          Logout
-        </Button>
-      </Box>
       <Paper
         elevation={3}
         sx={{
