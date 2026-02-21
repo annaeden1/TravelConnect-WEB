@@ -23,7 +23,9 @@ export const createTripPost = async (data: TripPostData & { userCreatorID: strin
     formData.append("photos", file);
   });
 
-  const response = await api.post("/post", formData);
+  const response = await api.post("/post", formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   
   return response.data;
 };

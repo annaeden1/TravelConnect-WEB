@@ -41,6 +41,7 @@ class postController extends genericController<IPost> {
       });
     }
   }
+
   // Post search method
   async searchPosts(req: Request, res: Response) {
     const { query } = req.body;
