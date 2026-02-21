@@ -4,7 +4,7 @@ export type PostData = {
   destination: string;
   startDate: string | Date;
   endDate: string | Date;
-  imageUrl?: string;
+  photos?: string[];
   userCreatorID: string;
   likes?: string[];
 };

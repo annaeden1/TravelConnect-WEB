@@ -1,21 +1,7 @@
 import express from "express";
-import multer from "multer";
-import { mkdirSync } from "node:fs";
 import postController from "../controllers/postController";
 import { authenticate } from "../middlewares/authMiddleware";
-import { FILES_PATH } from "./fileRouter";
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    mkdirSync(FILES_PATH, { recursive: true });
-    cb(null, FILES_PATH);
-  },
-  filename: function (req, file, cb) {
-    const ext = file.originalname.split(".").filter(Boolean).slice(1).join(".");
-    cb(null, Date.now() + "." + ext);
-  },
-});
-const upload = multer({ storage: storage });
+import { upload } from "../middlewares/uploadMiddleware";
 
 const router = express.Router();
 

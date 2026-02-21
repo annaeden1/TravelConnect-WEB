@@ -62,16 +62,21 @@ export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
 };
 
 async function convertPostsData (posts: any): Promise<Post[]> {
-    const convertedPosts: Post[] = await Promise.all(
+  const convertedPosts: Post[] = await Promise.all(
     posts.map(async (post: any) => {
-      const userCreator = await getUserDetails(post.userCreatorID);
+      let userCreator = { username: "Unknown", profileImage: "" };
+      try {
+        userCreator = await getUserDetails(post.userCreatorID);
+      } catch {
+        // user not found — show post anyway with a fallback
+      }
       const isLiked = post.likes.includes(getCurrentUserId());
 
       return {
         _id: post._id,
         content: post.content,
         userCreatorID: post.userCreatorID,
-        imageUrl: post.imageUrl || (post.photos && post.photos.length > 0 ? post.photos[0] : undefined),
+        imageUrl: post.photos && post.photos.length > 0 ? post.photos[0] : undefined,
         userCreator,
         likesCount: post.likes.length || 0,
         isLiked: isLiked || false,

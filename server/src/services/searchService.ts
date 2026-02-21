@@ -21,7 +21,7 @@ class SearchService {
 
             // Filter posts that have images
             if (parsedQuery.hasImage) {
-                mongoQuery.imageUrl = { $exists: true, $nin: [null, ''] };
+                mongoQuery.photos = { $exists: true, $not: { $size: 0 } };
             }
 
             // Build sort options
