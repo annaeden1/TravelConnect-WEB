@@ -1,6 +1,13 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import authService, { type LoginResponse } from "../services/authService";
 import type { CredentialResponse } from "@react-oauth/google";
+import { updateUser as updateUserService } from "../services/userService";
 
 type User = {
   _id: string;
@@ -15,9 +22,17 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, username: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    username: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   googleLogin: (credentialResponse: CredentialResponse) => Promise<void>;
+  updateUser: (fields: {
+    username?: string;
+    profileImage?: string;
+  }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -105,10 +120,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email: email,
     };
 
-    setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
+    setAuthState(
+      {
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      },
+      userData,
+    );
   };
 
-  const register = async (email: string, username: string, password: string) => {
+  const register = async (
+    email: string,
+    username: string,
+    password: string,
+  ) => {
     const response = await authService.register(email, username, password);
 
     const userData: User = {
@@ -118,7 +143,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email: email,
     };
 
-    setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
+    setAuthState(
+      {
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      },
+      userData,
+    );
   };
 
   const logout = async () => {
@@ -136,18 +167,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  const updateUser = async (fields: {
+    username?: string;
+    profileImage?: string;
+  }) => {
+    const currentUser = getStoredUser();
+    if (!currentUser) throw new Error("Not authenticated");
+    const updated = await updateUserService(currentUser._id, fields);
+    const newUser: User = { ...currentUser, ...updated };
+    storeUser(newUser);
+    setUser(newUser);
+  };
+
   const googleLogin = async (credentialResponse: CredentialResponse) => {
     try {
-      const response: LoginResponse = await authService.googleSignInSuccess(credentialResponse);
-      
+      const response: LoginResponse =
+        await authService.googleSignInSuccess(credentialResponse);
+
       const userData: User = {
         _id: response._id,
         username: response.username,
         profileImage: response.profileImage,
         email: response.email,
       };
-      
-      setAuthState({ accessToken: response.accessToken, refreshToken: response.refreshToken }, userData);
+
+      setAuthState(
+        {
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+        },
+        userData,
+      );
     } catch (error) {
       console.error("Google Login error:", error);
       throw error;
@@ -164,7 +214,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
-        googleLogin
+        googleLogin,
+        updateUser,
       }}
     >
       {children}

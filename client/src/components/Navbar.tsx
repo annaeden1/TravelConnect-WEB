@@ -1,18 +1,31 @@
-import { useNavigate, useLocation, type NavigateFunction, type Location } from "react-router";
 import {
-  Box,
-  Divider,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+  useNavigate,
+  useLocation,
+  type NavigateFunction,
+  type Location,
+} from "react-router";
+import { Box, Button, Divider, Tab, Tabs, Typography } from "@mui/material";
 import navItems from "../utils/types/navbarItems";
+import { Logout } from "@mui/icons-material";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const navigate : NavigateFunction = useNavigate();
-  const location : Location = useLocation();
+  const navigate: NavigateFunction = useNavigate();
+  const location: Location = useLocation();
+  const { logout } = useAuth();
 
-  const currentValue = navItems.findIndex(item => item.path === location.pathname);
+  const currentValue = navItems.findIndex(
+    (item) => item.path === location.pathname,
+  );
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      toast.error("Could not logout");
+    }
+  };
 
   return (
     <Box
@@ -27,7 +40,16 @@ const Navbar = () => {
         flexDirection: "column",
       }}
     >
-      <Box sx={{ p: "0.5rem", textAlign: "center", height: "3rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{
+          p: "0.5rem",
+          textAlign: "center",
+          height: "3rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#0ea5e9" }}>
           TravelConnect
         </Typography>
@@ -60,17 +82,29 @@ const Navbar = () => {
                 minHeight: "3.5rem",
                 backgroundColor: "transparent",
                 transition: "all 0.3s ease",
-                color: "#000000ff", 
+                color: "#000000ff",
                 "&.Mui-selected": {
                   backgroundColor: "#0ea5e9",
                   color: "#ffffff",
                   fontWeight: "bold",
-                }
+                },
               }}
             />
           );
         })}
       </Tabs>
+      <Box
+        sx={{
+          mt: "auto",
+          p: "1rem",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Button onClick={handleLogout} startIcon={<Logout />} color="inherit">
+          Logout
+        </Button>
+      </Box>
     </Box>
   );
 };
