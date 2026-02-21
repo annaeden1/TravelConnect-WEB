@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { postModel, type IPost } from "../models/postModel";
 import genericController from "./genericController";
 import type { Request, Response } from "express";
-import { getFileUrl } from "./fileController";
+import { getFileUrl } from "../config/filePaths";
 import llmService from "../services/llmService";
 import searchService from "../services/searchService";
 

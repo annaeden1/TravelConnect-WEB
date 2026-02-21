@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import { FILES_PATH } from "../routes/fileRouter";
-
-export const getFileUrl = (req: Request, filename: string) =>
-  `${req.protocol}://${req.get("host")}/${FILES_PATH}${filename}`;
+import { FILES_PATH, getFileUrl } from "../config/filePaths";
 
 const uploadFile = (req: Request, res: Response) => {
   if (!req.file) {

@@ -3,8 +3,8 @@ import express from "express";
 import uploadFile from "../controllers/fileController";
 import { authenticate } from "../middlewares/authMiddleware";
 import { mkdirSync } from "node:fs";
+import { FILES_PATH } from "../config/filePaths";
 
-export const FILES_PATH = "public/";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
