@@ -64,11 +64,13 @@ export const getPostsByUserId = async (userId: string): Promise<Post[]> => {
 async function convertPostsData (posts: any): Promise<Post[]> {
   const convertedPosts: Post[] = await Promise.all(
     posts.map(async (post: any) => {
-      let userCreator = { username: "Unknown", profileImage: "" };
+      let userCreator: { username: string; profileImage: string };
       try {
         userCreator = await getUserDetails(post.userCreatorID);
-      } catch {
+      } catch (error) {
         // user not found — show post anyway with a fallback
+        console.warn(`User details not found for post ${post._id}. Using fallback.`);
+        userCreator = { username: "Unknown User", profileImage: "" };
       }
       const isLiked = post.likes.includes(getCurrentUserId());
 
