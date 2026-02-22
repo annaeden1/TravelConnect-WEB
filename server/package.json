@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node index.ts",
+    "start": "tsc && node ./dist/src/index.js",
     "dev": "nodemon src/index.ts",
     "test": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit",
     "testUsers": "tsc && node  --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/users.test.ts",
