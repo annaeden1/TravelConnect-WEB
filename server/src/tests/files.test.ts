@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 describe("File Tests", () => {
   test("upload file", async () => {
-    const filePath = `${__dirname}\\cuteDraw.jpg`;
+    const filePath = path.join(__dirname, "cuteDraw.jpg");
 
     const response = await request(app)
       .post("/file")
