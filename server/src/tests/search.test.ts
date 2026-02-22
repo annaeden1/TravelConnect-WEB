@@ -12,22 +12,37 @@ const searchTestPosts = [
   {
     content: "Amazing trip to Tokyo, loved the sushi and temples",
     userCreatorID: "507f1f77bcf86cd799439011",
+    destination: "Tokyo, Japan",
+    startDate: new Date("2024-05-01"),
+    endDate: new Date("2024-05-15"),
   },
   {
     content: "Exploring the streets of Kyoto, beautiful shrines everywhere",
     userCreatorID: "507f1f77bcf86cd799439011",
+    destination: "Kyoto, Japan",
+    startDate: new Date("2024-06-01"),
+    endDate: new Date("2024-06-15"),
   },
   {
     content: "Beach vacation in Bali, Indonesia was incredible",
     userCreatorID: "507f1f77bcf86cd799439012",
+    destination: "Bali, Indonesia",
+    startDate: new Date("2024-07-01"),
+    endDate: new Date("2024-07-15"),
   },
   {
     content: "Road trip across Italy, Rome and Florence are must-see",
     userCreatorID: "507f1f77bcf86cd799439012",
+    destination: "Rome, Italy",
+    startDate: new Date("2024-08-01"),
+    endDate: new Date("2024-08-15"),
   },
   {
     content: "Hiking in the Swiss Alps, breathtaking views",
     userCreatorID: "507f1f77bcf86cd799439013",
+    destination: "Swiss Alps, Switzerland",
+    startDate: new Date("2024-09-01"),
+    endDate: new Date("2024-09-15"),
   },
 ];
 
