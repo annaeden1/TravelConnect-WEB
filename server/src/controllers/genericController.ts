@@ -49,7 +49,7 @@ class genericController<T> {
     try {
       if (Object.keys(filter).length > 0) {
         const data = await this.model.find(filter);
-        if (!data) {
+        if (!data || data.length === 0) {
           return res
             .status(404)
             .json({ error: `Data not found with filter ${stringify(filter)}` });

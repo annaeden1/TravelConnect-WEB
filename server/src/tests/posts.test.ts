@@ -144,7 +144,7 @@ describe("Post API Endpoints", () => {
         test("should return 404 for non-existing post ID", async () => {
             const res = await request(app).delete("/post/609e129e1c4ae12f34567890").set("Authorization", "Bearer " + loginUser.token);
             expect(res.statusCode).toEqual(404);
-            expect(res.body).toHaveProperty("error", "Item with id 609e129e1c4ae12f34567890 not found");
+            expect(res.body).toHaveProperty("error", "Post with id 609e129e1c4ae12f34567890 not found");
         });
     });
 
