@@ -2,7 +2,11 @@ import express, { type Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-dotenv.config({ path: ".env.dev" });
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.dev" });
+} else {
+  dotenv.config(); // Load default .env or rely on OS-level variables
+}
 import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -66,7 +70,7 @@ const intApp = () => {
   });
 };
 
-const PORT = Number(process.env.PORT ?? 3000);
+const PORT = Number(process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000));
 if (process.env.NODE_ENV !== "test") {
   intApp()
     .then((app) => {

@@ -3,4 +3,5 @@ dist/
 .claude/
 nul
 
-.env*
+.env.dev
+.env.test
