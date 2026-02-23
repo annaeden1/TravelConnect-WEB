@@ -10,7 +10,9 @@ import authRoutes from "./routes/authRoutes";
 import aiRoutes from "./routes/aiRoutes";
 import { specs, swaggerUi } from "./swagger";
 import { filesRouter } from "./routes/fileRouter";
-import path from "node:path";
+import https from "https";
+import http from "http";
+import fs from "fs";
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config({ path: ".env.dev", override: true });
@@ -73,17 +75,24 @@ const intApp = () => {
 const PORT = Number(
   process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000),
 );
-if (process.env.NODE_ENV !== "test") {
-  intApp()
-    .then((app) => {
+
+intApp()
+  .then((app) => {
+    if (process.env.NODE_ENV === "dev") {
       app.listen(PORT, () => {
         console.log(`Server running on http://localhost:${PORT}`);
       });
-    })
-    .catch((err) => {
-      console.error("Failed to init app:", err);
-      process.exit(1);
-    });
-}
+    } else if (process.env.NODE_ENV === "production") {
+      const options = {
+        key: fs.readFileSync("../client-key.pem"),
+        cert: fs.readFileSync("../client-cert.pem"),
+      };
+      https.createServer(options, app).listen(process.env.HTTPS_PORT);
+    }
+  })
+  .catch((err) => {
+    console.error("Failed to init app:", err);
+    process.exit(1);
+  });
 
 export default intApp;
