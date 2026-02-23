@@ -54,6 +54,7 @@ const intApp = () => {
       next();
     });
     app.use("/public", express.static("public"));
+    app.use("/client", express.static("client"));
 
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
