@@ -79,9 +79,7 @@ const PORT = Number(
 intApp()
   .then((app) => {
     if (process.env.NODE_ENV === "dev") {
-      app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
-      });
+      http.createServer(app).listen(process.env.PORT);
     } else if (process.env.NODE_ENV === "production") {
       const options = {
         key: fs.readFileSync("../../client-key.pem"),
