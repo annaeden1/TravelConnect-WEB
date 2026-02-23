@@ -13,7 +13,8 @@
     "testAuth": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/auth.test.ts",
     "testPosts": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/posts.test.ts",
     "testAI": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/ai.test.ts",
-    "testFiles": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/files.test.ts"
+    "testFiles": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/files.test.ts",
+    "prod": "cp .env.production .env && tsc -p tsconfig_prod.json && node ./dist/src/index.js"
   },
   "author": "Anna and Li-am",
   "license": "ISC",

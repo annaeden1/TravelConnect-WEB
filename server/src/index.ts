@@ -2,11 +2,7 @@ import express, { type Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: ".env.dev" });
-} else {
-  dotenv.config(); // Load default .env or rely on OS-level variables
-}
+dotenv.config(); // Load default .env or rely on OS-level variables
 import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -15,6 +11,10 @@ import aiRoutes from "./routes/aiRoutes";
 import { specs, swaggerUi } from "./swagger";
 import { filesRouter } from "./routes/fileRouter";
 import path from "node:path";
+
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.dev", override: true });
+}
 
 const app = express();
 
@@ -70,7 +70,9 @@ const intApp = () => {
   });
 };
 
-const PORT = Number(process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000));
+const PORT = Number(
+  process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000),
+);
 if (process.env.NODE_ENV !== "test") {
   intApp()
     .then((app) => {
