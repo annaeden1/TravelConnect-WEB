@@ -55,13 +55,10 @@ const intApp = () => {
       next();
     });
     app.use("/public", express.static("public"));
-    app.use(
-      "/client",
-      express.static(path.join(__dirname, "../../public/dist")),
-    );
+    app.use(express.static(path.join(__dirname, "../../public")));
 
     app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../../public/dist/index.html"));
+      res.sendFile(path.join(__dirname, "../../public", "index.html"));
     });
 
     const dbUri = process.env.MONGODB_URI;
