@@ -13,6 +13,7 @@ import { filesRouter } from "./routes/fileRouter";
 import https from "https";
 import http from "http";
 import fs from "fs";
+import path from "path";
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config({ path: ".env.dev", override: true });
@@ -54,7 +55,14 @@ const intApp = () => {
       next();
     });
     app.use("/public", express.static("public"));
-    app.use("/client", express.static("client"));
+    app.use(
+      "/client",
+      express.static(path.join(__dirname, "../../public/dist")),
+    );
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../../public/dist/index.html"));
+    });
 
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
