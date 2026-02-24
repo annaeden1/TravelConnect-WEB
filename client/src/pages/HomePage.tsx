@@ -8,9 +8,10 @@ import {
   InputAdornment,
   Paper,
   Typography,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from "axios";
 
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -24,6 +25,12 @@ const Home = () => {
       const fetchedPosts = await getAllPosts();
       setPosts(fetchedPosts);
     } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 404) {
+          setPosts([]);
+          return;
+        }
+      }
       setError(err instanceof Error ? err.message : "Failed to fetch posts");
     }
   };
@@ -50,12 +57,16 @@ const Home = () => {
   };
 
   const handlePostDeleted = (deletedPostId: string) => {
-    setPosts(prevPosts => prevPosts.filter(post => post._id !== deletedPostId));
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post._id !== deletedPostId),
+    );
   };
 
   const handlePostUpdated = (updatedPost: Post) => {
-    setPosts(prevPosts => 
-      prevPosts.map(post => post._id === updatedPost._id ? updatedPost : post)
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === updatedPost._id ? updatedPost : post,
+      ),
     );
   };
 
@@ -75,7 +86,14 @@ const Home = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
         <Typography variant="h6">Loading posts...</Typography>
       </Box>
     );
@@ -83,21 +101,30 @@ const Home = () => {
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <Typography variant="h6" color="error">{error}</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+    <Box sx={{ maxWidth: 800, mx: "auto", p: 2 }}>
       <Paper
         elevation={1}
         sx={{
           p: 2,
           mb: 3,
           borderRadius: 2,
-          backgroundColor: 'background.paper'
+          backgroundColor: "background.paper",
         }}
       >
         <TextField
@@ -120,13 +147,13 @@ const Home = () => {
             ) : null,
           }}
           sx={{
-            '& .MuiOutlinedInput-root': {
+            "& .MuiOutlinedInput-root": {
               borderRadius: 2,
-              '&:hover fieldset': {
-                borderColor: 'primary.main',
+              "&:hover fieldset": {
+                borderColor: "primary.main",
               },
-              '&.Mui-focused fieldset': {
-                borderColor: 'primary.main',
+              "&.Mui-focused fieldset": {
+                borderColor: "primary.main",
               },
             },
           }}
@@ -134,8 +161,8 @@ const Home = () => {
       </Paper>
 
       {/* Posts List */}
-      <PostsList 
-        posts={posts} 
+      <PostsList
+        posts={posts}
         onDelete={handlePostDeleted}
         onUpdate={handlePostUpdated}
       />
