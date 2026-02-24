@@ -5,10 +5,10 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Post & Comments & User REST API",
+      title: "TravelConnect Server REST API",
       version: "1.0.0",
       description:
-        "A simple Express REST API for managing posts, comments, and users",
+        "An Express REST API for managing posts, comments, users, ai and files in TravelConnect",
       contact: {
         name: "Li-am Hemo & Anna Eden",
         email: "developer@example.com",
@@ -16,8 +16,11 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: process.env.BASE_URL || "http://localhost:3000",
-        description: "Development server",
+        url:
+          process.env.BASE_URL ||
+          "https://node47.cs.colman.ac.il/" ||
+          "http://localhost:3000",
+        description: "TravelConnect server",
       },
     ],
     components: {
@@ -33,7 +36,7 @@ const options: swaggerJsdoc.Options = {
       schemas: {
         User: {
           type: "object",
-          required: ["username", "email", "password"],
+          required: ["username", "email"],
           properties: {
             _id: {
               type: "string",
@@ -67,22 +70,56 @@ const options: swaggerJsdoc.Options = {
               items: { type: "string" },
               description: "Array of refresh tokens for the user",
               example: ["token1", "token2"],
-            }
+            },
           },
         },
         Post: {
           type: "object",
-          required: ["content", "userCreatorID"],
+          required: [
+            "destination",
+            "startDate",
+            "endDate",
+            "content",
+            "userCreatorID",
+          ],
           properties: {
             _id: {
               type: "string",
               description: "Unique identifier for the post",
               example: "648a1f4e2f8fb814c8a1e1a2",
             },
+            destination: {
+              type: "string",
+              description: "Destination of the post - where was the trip",
+              example: "Tokyo",
+            },
+            startDate: {
+              type: "Date",
+              description: "start date of the trip",
+              example: "04/03/2025",
+            },
+            endDate: {
+              type: "Date",
+              description: "end date of the post",
+              example: "17/05/2025.",
+            },
             content: {
               type: "string",
               description: "Content of the post",
               example: "This is the content of my first post.",
+            },
+            photos: {
+              type: "string[]",
+              description: "photos of the trip",
+              example: [
+                "https://example.com/rome.jpg",
+                "https://example.com/tokyo.jpg",
+              ],
+            },
+            likes: {
+              type: "string[]",
+              description: "IDs of all the people who liked the post",
+              example: ["648a1f4e2f8fb814c8a1e1a1", "648a1f4e2f8fb814c8a1e1a2"],
             },
             userCreatorID: {
               type: "string",
@@ -118,84 +155,84 @@ const options: swaggerJsdoc.Options = {
           },
         },
         LoginRequest: {
-                    type: "object",
-                    required: ["email", "password"],
-                    properties: {
-                        email: {
-                            type: "string",
-                            format: "email",
-                            example: "user@example.com",
-                        },
-                        password: {
-                            type: "string",
-                            example: "password123",
-                        },
-                    },
-                },
-                RegisterRequest: {
-                    type: "object",
-                    required: ["email", "password", "username", "profileImage"],
-                    properties: {
-                        email: {
-                            type: "string",
-                            format: "email",
-                            example: "user@example.com",
-                        },
-                        password: {
-                            type: "string",
-                            minLength: 6,
-                            example: "password123",
-                        },
-                        username: {
-                            type: "string",
-                            example: "john_doe",
-                        },
-                        profileImage: {
-                            type: "string",
-                            example: "https://example.com/profile.jpg",
-                        }
-                    },
-                },
-                logoutRequest: {
-                    type: "object",
-                    required: ["refreshToken"],
-                    properties: {
-                        refreshToken: {
-                            type: "string",
-                            description: "Refresh token to be invalidated",
-                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                        },
-                    },
-                },
-                AuthResponse: {
-                    type: "object",
-                    properties: {
-                        accessToken: {
-                            type: "string",
-                            description: "JWT access token",
-                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                        },
-                        refreshToken: {
-                            type: "string",
-                            description: "JWT refresh token",
-                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                        },
-                        user: {
-                            $ref: "#/components/schemas/User",
-                        },
-                    },
-                },
-                RefreshTokenRequest: {
-                    type: "object",
-                    required: ["refreshToken"],
-                    properties: {
-                        refreshToken: {
-                            type: "string",
-                            description: "Valid refresh token",
-                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                        },
-                    },
-                },
+          type: "object",
+          required: ["email", "password"],
+          properties: {
+            email: {
+              type: "string",
+              format: "email",
+              example: "user@example.com",
+            },
+            password: {
+              type: "string",
+              example: "password123",
+            },
+          },
+        },
+        RegisterRequest: {
+          type: "object",
+          required: ["email", "password", "username", "profileImage"],
+          properties: {
+            email: {
+              type: "string",
+              format: "email",
+              example: "user@example.com",
+            },
+            password: {
+              type: "string",
+              minLength: 6,
+              example: "password123",
+            },
+            username: {
+              type: "string",
+              example: "john_doe",
+            },
+            profileImage: {
+              type: "string",
+              example: "https://example.com/profile.jpg",
+            },
+          },
+        },
+        logoutRequest: {
+          type: "object",
+          required: ["refreshToken"],
+          properties: {
+            refreshToken: {
+              type: "string",
+              description: "Refresh token to be invalidated",
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            },
+          },
+        },
+        AuthResponse: {
+          type: "object",
+          properties: {
+            accessToken: {
+              type: "string",
+              description: "JWT access token",
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            },
+            refreshToken: {
+              type: "string",
+              description: "JWT refresh token",
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            },
+            user: {
+              $ref: "#/components/schemas/User",
+            },
+          },
+        },
+        RefreshTokenRequest: {
+          type: "object",
+          required: ["refreshToken"],
+          properties: {
+            refreshToken: {
+              type: "string",
+              description: "Valid refresh token",
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            },
+          },
+        },
         Error: {
           type: "object",
           properties: {
