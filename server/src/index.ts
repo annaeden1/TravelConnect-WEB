@@ -2,11 +2,7 @@ import express, { type Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: ".env.dev" });
-} else {
-  dotenv.config(); // Load default .env or rely on OS-level variables
-}
+dotenv.config(); // Load default .env or rely on OS-level variables
 import postRoutes from "./routes/postRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -14,7 +10,10 @@ import authRoutes from "./routes/authRoutes";
 import aiRoutes from "./routes/aiRoutes";
 import { specs, swaggerUi } from "./swagger";
 import { filesRouter } from "./routes/fileRouter";
-import path from "node:path";
+import https from "https";
+import http from "http";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 
@@ -52,6 +51,11 @@ const intApp = () => {
       next();
     });
     app.use("/public", express.static("public"));
+    app.use(express.static(path.join(__dirname, "../../public")));
+
+    app.get("/{*path}", (req, res) => {
+      res.sendFile(path.join(__dirname, "../../public", "index.html"));
+    });
 
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {
@@ -70,18 +74,25 @@ const intApp = () => {
   });
 };
 
-const PORT = Number(process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000));
-if (process.env.NODE_ENV !== "test") {
-  intApp()
-    .then((app) => {
-      app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
-      });
-    })
-    .catch((err) => {
-      console.error("Failed to init app:", err);
-      process.exit(1);
-    });
-}
+const PORT = Number(
+  process.env.PORT || (process.env.NODE_ENV === "production" ? 80 : 3000),
+);
+
+intApp()
+  .then((app) => {
+    if (process.env.NODE_ENV === "dev") {
+      http.createServer(app).listen(process.env.PORT);
+    } else if (process.env.NODE_ENV === "production") {
+      const options = {
+        key: fs.readFileSync("../../client-key.pem"),
+        cert: fs.readFileSync("../../client-cert.pem"),
+      };
+      https.createServer(options, app).listen(process.env.HTTPS_PORT);
+    }
+  })
+  .catch((err) => {
+    console.error("Failed to init app:", err);
+    process.exit(1);
+  });
 
 export default intApp;
