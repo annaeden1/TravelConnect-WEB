@@ -29,7 +29,7 @@ const intApp = () => {
       swaggerUi.setup(specs, {
         explorer: true,
         customCss: ".swagger-ui .topbar { display: none }",
-        customSiteTitle: "Assignment 2 Server API Documentation",
+        customSiteTitle: "TravelConnect Server API Documentation",
       }),
     );
 
@@ -81,7 +81,7 @@ const PORT = Number(
 intApp()
   .then((app) => {
     if (process.env.NODE_ENV === "dev") {
-      http.createServer(app).listen(process.env.PORT);
+      http.createServer(app).listen(PORT);
     } else if (process.env.NODE_ENV === "production") {
       const options = {
         key: fs.readFileSync("../../client-key.pem"),
