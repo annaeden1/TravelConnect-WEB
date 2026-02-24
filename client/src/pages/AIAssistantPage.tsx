@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography, Stack, Avatar, AppBar, Toolbar } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { toast } from "react-toastify";
@@ -14,10 +14,44 @@ interface ChatSession {
 }
 
 const AIAssistant = () => {
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>(() => {
+    try {
+      const saved = localStorage.getItem("chatSessions");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map((session: any) => ({
+          ...session,
+          createdAt: new Date(session.createdAt),
+          messages: session.messages.map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp),
+          })),
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to parse chat sessions", e);
+    }
+    return [];
+  });
+  
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(() => {
+    return localStorage.getItem("currentChatSessionId") || null;
+  });
+  
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("chatSessions", JSON.stringify(chatSessions));
+  }, [chatSessions]);
+
+  useEffect(() => {
+    if (currentSessionId) {
+      localStorage.setItem("currentChatSessionId", currentSessionId);
+    } else {
+      localStorage.removeItem("currentChatSessionId");
+    }
+  }, [currentSessionId]);
 
   const currentSession = chatSessions.find((s) => s.id === currentSessionId);
   const hasUserMessage = currentSession && currentSession.messages.length > 0;
