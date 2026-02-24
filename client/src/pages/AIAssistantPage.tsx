@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import type { Message } from "../utils/types/chat";
 import { sendMessageToAI, createUserMessage } from "../services/aiService";
 import { ChatSidebar, ChatInput, ChatMessages } from "../components/ai";
+import { useAuth } from "../context/AuthContext";
 
 interface ChatSession {
   id: string;
@@ -14,9 +15,14 @@ interface ChatSession {
 }
 
 const AIAssistant = () => {
+  const { user } = useAuth();
+  const userId = user?._id || "anonymous";
+  const CHAT_SESSIONS_KEY = `chatSessions_${userId}`;
+  const CURRENT_SESSION_ID_KEY = `currentChatSessionId_${userId}`;
+
   const [chatSessions, setChatSessions] = useState<ChatSession[]>(() => {
     try {
-      const saved = localStorage.getItem("chatSessions");
+      const saved = localStorage.getItem(CHAT_SESSIONS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         return parsed.map((session: any) => ({
@@ -35,23 +41,23 @@ const AIAssistant = () => {
   });
   
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(() => {
-    return localStorage.getItem("currentChatSessionId") || null;
+    return localStorage.getItem(CURRENT_SESSION_ID_KEY) || null;
   });
   
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("chatSessions", JSON.stringify(chatSessions));
-  }, [chatSessions]);
+    localStorage.setItem(CHAT_SESSIONS_KEY, JSON.stringify(chatSessions));
+  }, [chatSessions, CHAT_SESSIONS_KEY]);
 
   useEffect(() => {
     if (currentSessionId) {
-      localStorage.setItem("currentChatSessionId", currentSessionId);
+      localStorage.setItem(CURRENT_SESSION_ID_KEY, currentSessionId);
     } else {
-      localStorage.removeItem("currentChatSessionId");
+      localStorage.removeItem(CURRENT_SESSION_ID_KEY);
     }
-  }, [currentSessionId]);
+  }, [currentSessionId, CURRENT_SESSION_ID_KEY]);
 
   const currentSession = chatSessions.find((s) => s.id === currentSessionId);
   const hasUserMessage = currentSession && currentSession.messages.length > 0;
