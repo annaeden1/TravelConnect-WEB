@@ -15,10 +15,6 @@ import http from "http";
 import fs from "fs";
 import path from "path";
 
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: ".env.dev", override: true });
-}
-
 const app = express();
 
 const intApp = () => {
@@ -59,7 +55,7 @@ const intApp = () => {
 
     app.get("/{*path}", (req, res) => {
       res.sendFile(path.join(__dirname, "../../public", "index.html"));
-    }); 
+    });
 
     const dbUri = process.env.MONGODB_URI;
     if (!dbUri) {

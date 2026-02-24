@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "tsc && node ./dist/src/index.js",
-    "dev": "nodemon src/index.ts",
-    "test": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit",
+    "dev": "cp .env.dev .env && nodemon src/index.ts",
+    "test": "cp .env.test .env && tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit",
     "testUsers": "tsc && node  --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/users.test.ts",
     "testComments": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --runInBand --detectOpenHandles --forceExit src/tests/comments.test.ts",
     "coverage": "tsc && node --localstorage-file=./jest-ls.json node_modules/jest/bin/jest.js --coverage --runInBand --detectOpenHandles --forceExit",
